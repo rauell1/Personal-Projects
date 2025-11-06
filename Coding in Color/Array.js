@@ -50,3 +50,13 @@ fruits.splice(2, 1, 'kiwi', 'grape'); // Remove 1 element at index 2 and add 'ki
 numbers.splice(3, 2, 20, 30); // Remove 2 elements at index 3 and add 20 and 30
 console.log(fruits); // Outputs: ['apple', 'banana', 'kiwi', 'grape', 'watermelon', 'mango']
 console.log(numbers); // Outputs: [1, 2, 10, 20, 30]    
+
+let mixedArray = [1, 'hello', true, null, 5.5];
+console.log(mixedArray); // Outputs: [1, 'hello', true, null, 5.5]
+console.log(mixedArray.length); // Outputs: 5
+console.log(mixedArray[3]); // Outputs: null    
+mixedArray[1] = 'world'; // Change 'hello' to 'world'
+console.log(mixedArray); // Outputs: [1, 'world', true, null, 5.5]
+mixedArray.push('new element'); // Add 'new element' to the end of the mixedArray
+console.log(mixedArray); // Outputs: [1, 'world', true, null, 5.5, 'new element']
+
