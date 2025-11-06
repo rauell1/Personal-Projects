@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafariCharge - Kenya's Clean Mobility Future</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+
+    /* Hero gradient (green + sky blue) */
+    .hero-gradient {
+      background: linear-gradient(135deg, #1e3a8a 0%, #0284c7 40%, #059669 100%);
+    }
+
+    /* Hover cards */
+    .feature-card {
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Mobile nav animation */
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-slide-down {
+      animation: slideDown 0.3s ease-out;
+    }
+
+    /* CTA Button gradient */
+    .btn-gradient {
+      background: linear-gradient(to right, #10b981, #0ea5e9);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .btn-gradient:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Navigation -->
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <i data-feather="battery-charging" class="text-green-600 h-8 w-8"></i>
+          <span class="ml-2 text-xl font-bold text-gray-900">SafariCharge</span>
+        </div>
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="#" class="text-gray-900 hover:text-green-600">Home</a>
+          <a href="#map" class="text-gray-500 hover:text-green-600">Map</a>
+          <a href="#solutions" class="text-gray-500 hover:text-green-600">Solutions</a>
+          <a href="#about" class="text-gray-500 hover:text-green-600">About</a>
+          <a href="#contact" class="btn-gradient text-white px-4 py-2 rounded-md text-sm font-medium">Get Started</a>
+        </div>
+        <!-- Mobile Hamburger -->
+        <div class="md:hidden flex items-center">
+          <button id="mobile-menu-btn" class="p-2 rounded-md text-gray-500 hover:text-green-600">
+            <i data-feather="menu"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-md">
+      <div class="px-4 py-3 space-y-2 animate-slide-down">
+        <a href="#" class="block text-gray-700 hover:text-green-600">Home</a>
+        <a href="#map" class="block text-gray-700 hover:text-green-600">Map</a>
+        <a href="#solutions" class="block text-gray-700 hover:text-green-600">Solutions</a>
+        <a href="#about" class="block text-gray-700 hover:text-green-600">About</a>
+        <a href="#contact" class="block text-green-700 font-semibold">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-gradient text-white relative overflow-hidden">
+    <div class="max-w-7xl mx-auto py-24 px-6 text-center relative z-10">
+      <h1 class="text-4xl md:text-6xl font-extrabold mb-6" data-aos="fade-down">
+        Accelerating Kenya’s Clean Mobility Future
+      </h1>
+      <p class="max-w-xl mx-auto text-lg md:text-xl mb-8" data-aos="fade-up" data-aos-delay="150">
+        The intelligent map and digital backbone for EV charging across Kenya.
+      </p>
+      <a href="#map" class="btn-gradient inline-flex items-center px-8 py-4 rounded-full text-lg font-semibold">
+        Explore Charging Map <i data-feather="arrow-right" class="ml-2"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section class="bg-white py-20 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-green-600 font-semibold tracking-wide uppercase mb-3" data-aos="fade-up">The Challenge</h2>
+      <p class="text-3xl font-extrabold text-gray-900 mb-4" data-aos="fade-up" data-aos-delay="100">
+        Drivers don’t know where to charge, and power isn’t always reliable.
+      </p>
+      <p class="text-lg text-gray-600" data-aos="fade-up" data-aos-delay="200">
+        As electric vehicles arrive on Kenyan roads, infrastructure must keep pace with adoption.
+      </p>
+    </div>
+  </section>
+
+  <!-- Solutions -->
+  <section id="solutions" class="bg-gray-50 py-20 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-green-600 font-semibold tracking-wide uppercase" data-aos="fade-up">Our Solutions</h2>
+        <p class="text-3xl font-extrabold text-gray-900" data-aos="fade-up" data-aos-delay="100">More than just a charging map</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-lg shadow-md feature-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="flex items-center justify-center h-12 w-12 rounded-md bg-green-100 text-green-600 mb-4">
+            <i data-feather="map"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Intelligent Charging Map</h3>
+          <p class="text-gray-500">Real-time visibility of charger locations, types, and availability.</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md feature-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-100 text-sky-600 mb-4">
+            <i data-feather="refresh-cw"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Battery Repurposing</h3>
+          <p class="text-gray-500">Second-life storage powering stations where the grid is weak.</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md feature-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="flex items-center justify-center h-12 w-12 rounded-md bg-green-100 text-green-600 mb-4">
+            <i data-feather="activity"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Data Intelligence</h3>
+          <p class="text-gray-500">Insights for fleets, operators, and policymakers to invest smarter.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vision -->
+  <section id="about" class="bg-white py-20 px-6">
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+      <div data-aos="fade-right">
+        <img src="https://source.unsplash.com/600x400/?electric,car" alt="EV charging in Kenya" class="rounded-lg shadow-xl">
+      </div>
+      <div data-aos="fade-left" data-aos-delay="100">
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Our Vision for East Africa</h2>
+        <p class="text-lg text-gray-600 mb-6">
+          SafariCharge will evolve into East Africa's operating system for clean mobility and energy — bridging EV adoption, circular economy innovation, and community electrification.
+        </p>
+        <a href="#" class="text-green-600 font-semibold hover:text-sky-600 flex items-center">
+          Learn more about our roadmap <i data-feather="arrow-right" class="ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="contact" class="bg-green-600 text-white py-16 px-6">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between">
+      <h2 class="text-3xl font-extrabold mb-6 lg:mb-0" data-aos="fade-right">
+        Ready to join the clean mobility revolution?
+      </h2>
+      <a href="#" class="btn-gradient text-white px-6 py-3 rounded-full font-semibold" data-aos="fade-left" data-aos-delay="150">
+        Contact Us
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-12 px-6">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-8">
+      <div>
+        <h3 class="text-sm font-semibold text-gray-300 uppercase">Solutions</h3>
+        <ul class="mt-4 space-y-2">
+          <li><a href="#" class="hover:text-white">Charging Map</a></li>
+          <li><a href="#" class="hover:text-white">Battery Repurposing</a></li>
+          <li><a href="#" class="hover:text-white">Community Energy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-gray-300 uppercase">Company</h3>
+        <ul class="mt-4 space-y-2">
+          <li><a href="#" class="hover:text-white">About</a></li>
+          <li><a href="#" class="hover:text-white">Team</a></li>
+          <li><a href="#" class="hover:text-white">Careers</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-gray-300 uppercase">Resources</h3>
+        <ul class="mt-4 space-y-2">
+          <li><a href="#" class="hover:text-white">Blog</a></li>
+          <li><a href="#" class="hover:text-white">FAQ</a></li>
+          <li><a href="#" class="hover:text-white">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-gray-300 uppercase">Subscribe</h3>
+        <form class="mt-4 flex">
+          <input type="email" placeholder="Your email" class="w-full px-3 py-2 rounded-l-md border border-gray-700 bg-gray-800 text-gray-300 focus:outline-none">
+          <button class="btn-gradient text-white px-4 rounded-r-md">Go</button>
+        </form>
+      </div>
+    </div>
+    <div class="mt-10 text-center text-sm text-gray-500">
+      © 2025 SafariCharge. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    AOS.init({ duration: 800, easing: 'ease-in-out', once: true });
+    feather.replace();
+
+    // Mobile nav toggle
+    const menuBtn = document.getElementById("mobile-menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+    menuBtn.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
+    });
+  </script>
+</body>
+</html>

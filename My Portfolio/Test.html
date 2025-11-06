@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Name — Portfolio</title>
+  <meta name="description" content="Minimal, responsive portfolio template inspired by modern motion/3D portfolios." />
+
+  <!-- FAVICON (replace or remove) -->
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+
+  <style>
+    /* -------------------------
+       Basic reset & variables
+       ------------------------- */
+    :root{
+      --bg:#0b0b0d;
+      --card:#0f1720;
+      --muted:#9aa3b2;
+      --accent:#60a5fa;
+      --glass: rgba(255,255,255,0.03);
+      --radius:14px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#071226);color:#e6eef8}
+    a{color:inherit;text-decoration:none}
+
+    /* -------------------------
+       Layout
+       ------------------------- */
+    .container{max-width:1100px;margin:0 auto;padding:32px}
+
+    header{position:fixed;inset:18px 0 0;pointer-events:auto}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:transparent}
+    .brand{font-weight:700;letter-spacing:0.4px}
+    .menu{display:flex;gap:18px;align-items:center}
+    .menu a{font-size:14px;color:var(--muted)}
+    .cta{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px}
+
+    /* mobile nav */
+    .hamburger{display:none;width:38px;height:38px;border-radius:10px;background:var(--glass);align-items:center;justify-content:center}
+
+    /* hero */
+    .hero{min-height:70vh;display:grid;align-items:center;padding-top:80px}
+    .hero-grid{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center}
+    .hero h1{font-size:clamp(26px,6vw,44px);margin:0}
+    .lead{margin-top:12px;color:var(--muted);max-width:60ch}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:var(--radius);box-shadow:0 8px 30px rgba(3,7,18,0.6)}
+
+    /* portfolio grid */
+    .projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:36px}
+    .project{position:relative;overflow:hidden;border-radius:12px;min-height:160px}
+    .project img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.06);transition:transform .7s cubic-bezier(.2,.9,.3,1)}
+    .project:hover img{transform:scale(1.0)}
+    .project .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,6,23,0.25),rgba(2,6,23,0.6));display:flex;flex-direction:column;justify-content:flex-end;padding:14px}
+    .project h4{margin:0;font-size:16px}
+    .project p{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+    /* footer */
+    footer{margin:64px 0 30px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* responsiveness */
+    @media (max-width:900px){
+      .hero-grid{grid-template-columns:1fr;}
+      .hamburger{display:flex}
+      .menu{display:none}
+      header{inset:10px 12px 0}
+    }
+
+    /* simple reveal animation */
+    .reveal{opacity:0;transform:translateY(12px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.visible{opacity:1;transform:none}
+
+    /* tiny utilities */
+    .muted{color:var(--muted)}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#3b82f6);color:#021427;font-weight:600}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">Your Name</div>
+      <nav class="menu" aria-label="Primary">
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div style="display:flex;gap:12px;align-items:center">
+        <a class="cta" href="#contact">Get in touch</a>
+        <button class="hamburger" aria-label="Open menu" onclick="toggleMobile()">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <h1 class="reveal">Hi, I'm Josef — motion & 3D artist</h1>
+          <p class="lead reveal">I create motion graphics, product renders and packaging visuals. I focus on photoreal materials, clean lighting and storytelling. Scroll to see selected projects.</p>
+
+          <p style="margin-top:20px" class="reveal"><a class="btn" href="#work">See projects</a></p>
+        </div>
+
+        <aside class="card reveal">
+          <h3 style="margin:0 0 8px">Featured</h3>
+          <p class="muted" style="margin:0">Juliet — packaging concept / 3D render</p>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <a class="cta" href="https://drive.google.com" target="_blank">Read my Résumé</a>
+            <a class="cta" href="#contact">Contact</a>
+          </div>
+        </aside>
+      </div>
+
+      <div style="margin-top:36px">
+        <div id="work" class="reveal">
+          <h2 style="margin-bottom:12px">Selected Projects</h2>
+          <div class="projects">
+            <!-- Replace these with your own images and descriptions -->
+            <article class="project card reveal">
+              <img src="https://picsum.photos/640/420?random=1" alt="Project image 1" />
+              <div class="overlay">
+                <h4>Juliet — Packaging</h4>
+                <p class="muted">3D render / Product visuals</p>
+              </div>
+            </article>
+
+            <article class="project card reveal">
+              <img src="https://picsum.photos/640/420?random=2" alt="Project image 2" />
+              <div class="overlay">
+                <h4>Graded Card Case</h4>
+                <p class="muted">Concept / Visual</p>
+              </div>
+            </article>
+
+            <article class="project card reveal">
+              <img src="https://picsum.photos/640/420?random=3" alt="Project image 3" />
+              <div class="overlay">
+                <h4>The Mighty — Slow Feeder</h4>
+                <p class="muted">Product render</p>
+              </div>
+            </article>
+
+            <article class="project card reveal">
+              <img src="https://picsum.photos/640/420?random=4" alt="Project image 4" />
+              <div class="overlay">
+                <h4>Neck Head Harness</h4>
+                <p class="muted">Prototype render</p>
+              </div>
+            </article>
+
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <section id="about" style="margin-top:48px" class="reveal">
+      <h2>About</h2>
+      <p class="muted">I’m a motion designer and 3D generalist. I combine technical knowledge of materials & lighting with storytelling to produce product visuals and short animations used in branding and presentations.</p>
+
+      <div style="display:flex;gap:18px;margin-top:18px;flex-wrap:wrap">
+        <div class="card" style="flex:1;min-width:220px">
+          <h4>Skills</h4>
+          <ul class="muted">
+            <li>Blender / Cinema4D</li>
+            <li>Octane / Redshift</li>
+            <li>After Effects / Premiere</li>
+            <li>Photoshop / Illustrator</li>
+          </ul>
+        </div>
+
+        <div class="card" style="flex:1;min-width:220px">
+          <h4>Selected clients</h4>
+          <p class="muted" style="margin:0">Brand A • Brand B • Studio C</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" style="margin-top:48px" class="reveal">
+      <h2>Contact</h2>
+      <p class="muted">Interested in working together? Drop a note.</p>
+
+      <form style="margin-top:12px;display:grid;gap:10px;max-width:560px">
+        <input name="name" placeholder="Your name" style="padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit" />
+        <input name="email" placeholder="Email" style="padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit" />
+        <textarea name="message" rows="4" placeholder="Message" style="padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit"></textarea>
+        <div style="display:flex;gap:8px">
+          <button type="submit" class="btn">Send message</button>
+          <a class="cta" href="#" onclick="event.preventDefault();alert('Replace with mailto or form handling');">Or email me</a>
+        </div>
+      </form>
+    </section>
+
+    <footer>
+      © " + new Date().getFullYear() + " Your Name • Built with ❤️
+    </footer>
+  </main>
+
+  <script>
+    // Simple mobile menu (toggle)
+    function toggleMobile(){
+      const menu = document.querySelector('.menu');
+      if(!menu) return;
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // Smooth scroll for in-page links
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', e=>{
+        const href = a.getAttribute('href');
+        if(href === '#') return;
+        const el = document.querySelector(href);
+        if(!el) return;
+        e.preventDefault();
+        el.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    });
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    },{threshold:0.08});
+    reveals.forEach(r=>obs.observe(r));
+
+    // Placeholder: prevent actual form submission (replace with real handler)
+    document.querySelectorAll('form').forEach(f=>f.addEventListener('submit', e=>{e.preventDefault();alert('Form submission handling not implemented — replace with your backend or a service like Formspree.');}));
+  </script>
+</body>
+</html>
