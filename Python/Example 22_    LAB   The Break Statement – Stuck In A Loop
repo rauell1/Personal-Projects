@@ -1,0 +1,15 @@
+
+
+
+
+word = "chupacabra"
+
+
+while True:
+    word1= input("Enter a word: ")
+    if word1 == word:
+        print("You've successfully left the loop.")
+        break
+    else:
+        print("Again!")
+

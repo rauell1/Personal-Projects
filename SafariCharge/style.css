@@ -1,0 +1,38 @@
+/* Custom animations */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeIn 1s ease-out forwards;
+}
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.fade-left {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+.fade-right {
+  opacity: 0;
+  transform: translateX(40px);
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.visible {
+  opacity: 1 !important;
+  transform: translate(0,0) !important;
+  transition: all 0.8s ease-out;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}

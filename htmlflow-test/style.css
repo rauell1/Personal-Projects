@@ -1,0 +1,118 @@
+/* ======== Roam Energy Combined Styles ======== */
+
+/* --- CSS Section --- */
+.gradient-bg {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+.project-card {
+  transition: all 0.3s ease;
+}
+.project-card:hover {
+  transform: scale(1.03);
+}
+.hero-image {
+  background-image: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  background-size: cover;
+  background-position: center;
+}
+.testimonial-carousel {
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}
+.testimonial-slide {
+  scroll-snap-align: start;
+  flex: 0 0 100%;
+}
+@media (min-width: 768px) {
+  .testimonial-slide {
+    flex: 0 0 calc(33.333% - 1rem);
+  }
+}
+@media (max-width: 768px) {
+  .hero-content {
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+  #mobile-nav {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+  #mobile-nav.active {
+    max-height: 500px;
+  }
+}
+
+/* --- Embedded JavaScript Section --- */
+<script>
+// Initialize AOS animation
+AOS.init({ duration: 800, once: true });
+
+// Testimonial carousel
+const carousel = document.querySelector('.testimonial-carousel');
+const slides = document.querySelectorAll('.testimonial-slide');
+const dots = document.querySelectorAll('.testimonial-dot');
+let currentIndex = 0;
+
+function updateCarousel() {
+  const slideWidth = slides[0].offsetWidth;
+  carousel.scrollTo({ left: currentIndex * slideWidth, behavior: 'smooth' });
+  dots.forEach((dot, index) => {
+    dot.classList.toggle('bg-blue-600', index === currentIndex);
+    dot.classList.toggle('bg-gray-300', index !== currentIndex);
+  });
+}
+
+document.querySelector('.testimonial-prev')?.addEventListener('click', () => {
+  currentIndex = (currentIndex > 0) ? currentIndex - 1 : slides.length - 1;
+  updateCarousel();
+});
+
+document.querySelector('.testimonial-next')?.addEventListener('click', () => {
+  currentIndex = (currentIndex < slides.length - 1) ? currentIndex + 1 : 0;
+  updateCarousel();
+});
+
+dots.forEach((dot, index) => {
+  dot.addEventListener('click', () => { currentIndex = index; updateCarousel(); });
+});
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// FAQ toggle
+document.querySelectorAll(".faq-toggle").forEach(button => {
+  button.addEventListener("click", () => {
+    const content = button.nextElementSibling;
+    const icon = button.querySelector("i");
+
+    document.querySelectorAll(".faq-content").forEach(faq => {
+      if (faq !== content) faq.classList.add("hidden");
+    });
+
+    document.querySelectorAll(".faq-toggle i").forEach(i => {
+      if (i !== icon) i.classList.remove("rotate-180");
+    });
+
+    content.classList.toggle("hidden");
+    icon.classList.toggle("rotate-180");
+  });
+});
+
+// Floating WhatsApp visibility
+window.addEventListener("scroll", function() {
+  const btn = document.getElementById("whatsapp-btn");
+  if (!btn) return;
+  const atBottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 10);
+  btn.style.display = atBottom ? "block" : "none";
+});
+</script>

@@ -1,0 +1,12 @@
+# Find the larger number
+
+number1 = int(input("Enter the first number: "))
+number2 = int(input("Enter the second number: "))
+
+if number1 > number2:
+    larger_number = number1
+    print("The larger number is ", larger_number)
+
+else:
+    larger_number = number2
+    print("The larger number is ", number2)

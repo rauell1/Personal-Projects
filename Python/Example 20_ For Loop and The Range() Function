@@ -1,0 +1,5 @@
+number = 1
+
+for expo in range(16):
+    print("2 exponential ", expo, "is" , number)
+    number *= 2
