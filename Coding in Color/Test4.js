@@ -15,7 +15,7 @@ console.log(["color"]);   // Output: red
 console.log(car['color']); // Output: red
 console.log(car.color);   // Output: red   
 
-
+// Function as Object Property
 let robot = {
     name: 'Gemini',
     greeting: function() {
