@@ -19,8 +19,9 @@ numbers[2] = 10; // Change the third element from 3 to 10
 console.log(numbers); // Outputs: [1, 2, 10, 4, 5]
 
 
-// Adding elements to the array // Explaination: push() - Adds one or more elements to the end of an array and returns the new length of the array. unshift() - Adds one or more elements to the beginning of an array and returns the new length of the array.
-// Unshift means to add elements at the start of the array.
+// Adding elements to the array 
+// push() - Adds one or more elements to the end of an array and returns the new length of the array. 
+// unshift() - Adds one or more elements to the beginning of an array and returns the new length of the array.
 fruits.push('watermelon', 'mango', 'pineapple'); // Add 'watermelon', 'mango', and 'pineapple' to the end of the fruits array
 numbers.unshift(0); // Add 0 to the beginning of the numbers array
 console.log(fruits); // Outputs: ['apple', 'banana', 'cherry', 'watermelon', 'mango', 'pineapple']
