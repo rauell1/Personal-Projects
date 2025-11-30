@@ -12,6 +12,123 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
+        /* ===== Animations & motion for About + Mission section ===== */
+/* Variables (add to your :root if already present) */
+:root{
+  --anim-duration: 640ms;
+  --anim-ease: cubic-bezier(.22,.9,.3,1);
+  --muted: #607477;
+  --focus-ring: 4px;
+}
+
+/* Base state for elements that should animate in */
+.fade-in {
+  opacity: 0;
+  transform: translateY(18px) scale(0.995);
+  will-change: transform, opacity;
+  transition: opacity var(--anim-duration) var(--anim-ease),
+              transform var(--anim-duration) var(--anim-ease);
+  pointer-events: auto;
+}
+
+/* Visible state added by JS when element enters viewport */
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Stagger helper — when you want explicit control in HTML, use data-delay-ms */
+.fade-in[data-delay-ms] {
+  transition-delay: attr(data-delay-ms ms); /* fallback ignored in some browsers but okay */
+}
+
+/* Slight transform for cards on hover + focus */
+.fade-in:hover,
+.fade-in:focus-within {
+  transform: translateY(-6px) scale(1.002);
+  box-shadow: 0 18px 36px rgba(2,48,36,0.06);
+  transition: transform 220ms var(--anim-ease), box-shadow 220ms linear;
+}
+
+/* Accessible focus-visible ring */
+.fade-in:focus-visible {
+  outline: none;
+  box-shadow: 0 24px 60px rgba(3,166,136,0.08);
+  border-radius: 12px;
+}
+
+/* Heading underline grow effect */
+.section-title {
+  position: relative;
+  display: inline-block;
+}
+.section-title::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.5rem;
+  height: 4px;
+  background: linear-gradient(90deg, rgba(0,121,107,0.95), rgba(3,166,136,0.6));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 520ms var(--anim-ease);
+  border-radius: 8px;
+  opacity: 0.95;
+}
+/* When the section header is visible, grow the underline */
+.section-header.visible .section-title::after{
+  transform: scaleX(1);
+}
+
+/* Subtle icon/emoji pop for cards' icons */
+.fade-in .icon-pop {
+  display:inline-block;
+  transform-origin:center;
+  transform: scale(0.9);
+  transition: transform 420ms var(--anim-ease), opacity 420ms var(--anim-ease);
+  opacity: 0.95;
+}
+.fade-in.visible .icon-pop { transform: scale(1); opacity: 1; }
+
+/* Value highlight micro animation (slight float) */
+.value-highlight {
+  transform-origin: center;
+  transition: transform 420ms var(--anim-ease), box-shadow 420ms var(--anim-ease);
+}
+.value-highlight:hover { transform: translateY(-6px) scale(1.01); box-shadow: 0 18px 36px rgba(2,48,36,0.06); }
+
+/* CTA micro attention (soft glow pulse) */
+.cta-pulse {
+  position: relative;
+  overflow: visible;
+}
+.cta-pulse::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, rgba(3,166,136,0.04), rgba(0,198,161,0.02));
+  filter: blur(8px);
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 520ms ease, transform 520ms ease;
+}
+.cta-pulse.visible::after { opacity: 1; transform: scale(1); }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in,
+  .section-title::after,
+  .fade-in .icon-pop,
+  .cta-pulse::after {
+    transition: none !important;
+    animation: none !important;
+  }
+  .fade-in { transform: none; opacity: 1; }
+  .section-title::after { transform: none; opacity: 1; }
+}
+
         * {
             margin: 0;
             padding: 0;
@@ -576,6 +693,15 @@
                 flex-direction: column;
                 text-align: center;
             }
+
+            /* About section responsive */
+            #about > div > div:nth-child(2) {
+                grid-template-columns: 1fr !important;
+            }
+
+            #about .section-title {
+                font-size: 1.75rem !important;
+            }
         }
 
         /* Fade-in animation */
@@ -665,6 +791,56 @@
             margin: 1rem !important;
             font-family: 'Inter', sans-serif !important;
         }
+        /* Popup overlay */
+#popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(3px);
+    z-index: 999;
+}
+
+/* Popup modal box */
+.popup-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--card);
+    padding: 2rem;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 14px;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+/* Close button */
+.close-popup {
+    float: right;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333;
+}
+
+.learn-more-btn {
+    background: var(--primary);
+    color: white;
+    padding: 0.65rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+.learn-more-btn:hover {
+    background: var(--primary-dark);
+}
+
     </style>
     
     <!-- Leaflet CSS -->
@@ -681,9 +857,8 @@
             </a>
             <ul class="nav-links">
                 <li><a href="#hero">Home</a></li>
-                <li><a href="#what-we-do">What We Do</a></li>
-                <a href="ChargingMap.html" target="_blank" rel="noopener" class="btn-primary">Charging Map</a>
-
+                <li><a href="WhatWeDo.html">What We Do</a></li>
+                <li><a href="ChargingMap.html">Charging Map</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact" class="btn-primary">Get Started</a></li>
             </ul>
@@ -706,12 +881,12 @@
             
             <p>
                 SafariCharge is the intelligent map and digital backbone for EV charging 
-                and circular energy systems — enabling drivers, businesses, and communities 
+                and circular energy systems- enabling drivers, businesses, and communities 
                 to access reliable, smart, and sustainable power.
             </p>
             
             <div class="hero-buttons">
-                <a href="map.html" class="btn-primary" style="font-size: 1.125rem; padding: 1.5rem 2.5rem;">
+                <a href="ChargingMap.html" class="btn-primary" style="font-size: 1.125rem; padding: 1.5rem 2.5rem;">
                     Explore Charging Map →
                 </a>
                 <a href="#contact" class="btn-secondary">
@@ -727,7 +902,7 @@
                     <div>
                         <h3>🔋 Battery Repurposing</h3>
                         <p>
-                            Second-life storage powering charging stations where the grid is weak — 
+                            Second-life storage powering charging stations where the grid is weak - 
                             making clean mobility accessible, resilient, and affordable.
                         </p>
                     </div>
@@ -741,7 +916,7 @@
     </section>
 
     <!-- Why SafariCharge Section -->
-    <section id="why" style="background: var(--background);">
+    <section id="why-safaricharge" style="background: var(--background);">
         <div class="section-container">
             <div class="section-header fade-in">
                 <div class="section-label">Why SafariCharge</div>
@@ -752,114 +927,144 @@
             </div>
             
             <div class="features-grid">
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <span style="font-size: 1.75rem;">🗺️</span>
-                    </div>
-                    <h3>Real-Time Charging Map</h3>
-                    <p>Locate, navigate, and charge effortlessly with live data on charger availability and status.</p>
-                </div>
-                
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <span style="font-size: 1.75rem;">🔋</span>
-                    </div>
-                    <h3>Second-Life Battery Systems</h3>
-                    <p>Powering stations and communities with repurposed EV batteries for resilient energy access.</p>
-                </div>
-                
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <span style="font-size: 1.75rem;">📊</span>
-                    </div>
-                    <h3>Data Intelligence</h3>
-                    <p>Actionable insights for drivers, fleets, utilities, and city planners to optimize infrastructure.</p>
-                </div>
-                
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <span style="font-size: 1.75rem;">👥</span>
-                    </div>
-                    <h3>Community Access</h3>
-                    <p>Clean, affordable energy solutions delivered where it's needed most across East Africa.</p>
+                <div class="feature-card fade-in" data-popup="charging-map">
+    <div class="feature-icon"><span style="font-size:1.75rem;">🗺️</span></div>
+    <h3>Real-Time Charging Map</h3>
+    <p>Locate, navigate, and charge effortlessly…</p>
+    <button class="learn-more-btn">Learn More</button>
+</div>
+
+<div class="feature-card fade-in" data-popup="battery-systems">
+    <div class="feature-icon"><span style="font-size:1.75rem;">🔋</span></div>
+    <h3>Second-Life Battery Systems</h3>
+    <p>Powering stations and communities…</p>
+    <button class="learn-more-btn">Learn More</button>
+</div>
+
+<div class="feature-card fade-in" data-popup="data-intelligence">
+    <div class="feature-icon"><span style="font-size:1.75rem;">📊</span></div>
+    <h3>Data Intelligence</h3>
+    <p>Actionable insights for drivers and fleets…</p>
+    <button class="learn-more-btn">Learn More</button>
+</div>
+
+<div class="feature-card fade-in" data-popup="community-access">
+    <div class="feature-icon"><span style="font-size:1.75rem;">👥</span></div>
+    <h3>Community Access</h3>
+    <p>Clean, affordable energy solutions…</p>
+    <button class="learn-more-btn">Learn More</button>
+</div>
+
+            </div>
+        </div>
+    </section>
+
+ 
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- What We Do Section -->
-    <section id="what-we-do" style="background: var(--card);">
-        <div class="section-container">
-            <div class="section-header fade-in">
-                <div class="section-label">What We Do</div>
-                <h2 class="section-title">Building the infrastructure for clean mobility</h2>
-            </div>
-            
-            <div class="services-list">
-                <div class="service-item fade-in">
-                    <div class="service-icon-wrapper">
-                        <div class="service-icon emerald">
-                            <span style="font-size: 3.5rem;">⚡</span>
-                        </div>
-                    </div>
-                    <div class="service-content">
-                        <h3>Smart EV Charging Infrastructure</h3>
-                        <p>
-                            We deploy and integrate a growing network of EV charging locations across East Africa. 
-                            Our intelligent platform makes it easy for drivers to locate, access, pay, and charge 
-                            using real-time, reliable data.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="service-item fade-in">
-                    <div class="service-icon-wrapper">
-                        <div class="service-icon cyan">
-                            <span style="font-size: 3.5rem;">♻️</span>
-                        </div>
-                    </div>
-                    <div class="service-content">
-                        <h3>Distributed Energy & Circular Systems</h3>
-                        <p>
-                            To overcome grid limitations, SafariCharge integrates solar energy, storage systems, 
-                            and second-life battery technology. These solutions support charging stations, strengthen 
-                            local power systems, and deliver energy to homes and businesses.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="service-item fade-in">
-                    <div class="service-icon-wrapper">
-                        <div class="service-icon blue">
-                            <span style="font-size: 3.5rem;">📈</span>
-                        </div>
-                    </div>
-                    <div class="service-content">
-                        <h3>Insights & Data Intelligence</h3>
-                        <p>
-                            Our analytics engine turns charging and energy data into actionable insights for 
-                            governments, fleet operators, utilities, energy developers, and innovators — supporting 
-                            smarter planning and efficient deployment.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="service-item fade-in">
-                    <div class="service-icon-wrapper">
-                        <div class="service-icon amber">
-                            <span style="font-size: 3.5rem;">🏠</span>
-                        </div>
-                    </div>
-                    <div class="service-content">
-                        <h3>Community Electrification</h3>
-                        <p>
-                            We design clean-energy solutions that extend power access to underserved areas, 
-                            helping communities grow resilient local economies and participate in the clean-energy transition.
-                        </p>
-                    </div>
-                </div>
-            </div>
+    <!-- ABOUT + MISSION SECTION -->
+    <section id="about" style="padding:6rem 1.5rem; background:var(--background);">
+      <div class="section-container" style="max-width:1280px; margin:0 auto;">
+        
+        <div class="section-header fade-in" style="text-align:center; margin-bottom:4rem;">
+          <div class="section-label" style="color:var(--primary); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:1rem;">
+            About SafariCharge
+          </div>
+          <h2 class="section-title" style="font-size:clamp(2rem,5vw,3rem); font-weight:900; color:var(--foreground); line-height:1.2; max-width:900px; margin:0 auto;">
+            Building the digital & physical backbone for East Africa's clean-mobility revolution
+          </h2>
         </div>
+
+        <!-- ABOUT GRID -->
+        <div style="
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:3rem;
+          align-items:start;
+        ">
+
+          <!-- LEFT COLUMN – ABOUT TEXT -->
+          <div class="fade-in" style="background:var(--card); padding:2rem; border-radius:1.25rem; border:1px solid var(--border); box-shadow:0 4px 14px rgba(0,0,0,0.06);">
+            
+            <h3 style="font-size:1.75rem; font-weight:800; margin-bottom:1rem; color:var(--foreground);">
+              Who We Are
+            </h3>
+
+            <p style="font-size:1.1rem; color:var(--muted-foreground); line-height:1.75; margin-bottom:1.5rem;">
+              SafariCharge is building the ecosystem powering East Africa's clean-mobility transition. 
+              Our platform connects electric vehicles with reliable charging points, intelligent routing, 
+              and distributed energy systems - including solar and second-life battery storage.
+            </p>
+
+            <p style="font-size:1.1rem; color:var(--muted-foreground); line-height:1.75;">
+              We exist to make clean mobility accessible, affordable, and resilient for drivers, businesses, 
+              and communities - from major cities to rural locations where energy access is limited.
+            </p>
+          </div>
+
+          <!-- RIGHT COLUMN – MISSION CARD -->
+          <div class="fade-in" style="
+            background:var(--card);
+            padding:2rem;
+            border-radius:1.25rem;
+            border:1px solid var(--border);
+            box-shadow:0 4px 14px rgba(0,0,0,0.06);
+            position:relative;
+            overflow:hidden;
+          ">
+            <div style="position:absolute; inset:0; background:linear-gradient(120deg, rgba(16,185,129,0.08), rgba(6,182,212,0.15)); opacity:0.4;"></div>
+
+            <div style="position:relative; z-index:2;">
+              <h3 style="font-size:1.75rem; font-weight:800; margin-bottom:1rem; color:var(--foreground);">
+                Our Mission
+              </h3>
+
+              <p style="font-size:1.1rem; color:var(--muted-foreground); line-height:1.75; margin-bottom:1rem;">
+                SafariCharge accelerates East Africa's transition to clean mobility and resilient 
+                energy systems. Our mission is to build a unified, data-driven platform that connects 
+                electric vehicles, smart charging infrastructure, and circular-energy solutions.
+              </p>
+
+              <p style="font-size:1.1rem; color:var(--muted-foreground); line-height:1.75;">
+                Through innovation, strong partnerships, and inclusive design, we are unlocking a 
+                low-carbon future where mobility and energy work together to drive regional prosperity.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- VALUE HIGHLIGHTS -->
+        <div style="margin-top:4rem; display:grid; gap:2rem; grid-template-columns:repeat(auto-fit, minmax(250px,1fr));">
+          
+          <div class="fade-in" style="background:var(--card); padding:1.75rem; border-radius:1rem; border:1px solid var(--border); box-shadow:0 3px 10px rgba(0,0,0,0.05);">
+            <div style="font-size:2rem; margin-bottom:0.75rem;">⚡</div>
+            <h4 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem;">Smart Charging</h4>
+            <p style="color:var(--muted-foreground); font-size:0.95rem; line-height:1.6;">
+              Real-time charge point visibility, connector details, and navigation.
+            </p>
+          </div>
+
+          <div class="fade-in" style="background:var(--card); padding:1.75rem; border-radius:1rem; border:1px solid var(--border); box-shadow:0 3px 10px rgba(0,0,0,0.05);">
+            <div style="font-size:2rem; margin-bottom:0.75rem;">🔋</div>
+            <h4 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem;">Second-Life Energy</h4>
+            <p style="color:var(--muted-foreground); font-size:0.95rem; line-height:1.6;">
+              Battery repurposing powering stations & communities where the grid is weak.
+            </p>
+          </div>
+
+          <div class="fade-in" style="background:var(--card); padding:1.75rem; border-radius:1rem; border:1px solid var(--border); box-shadow:0 3px 10px rgba(0,0,0,0.05);">
+            <div style="font-size:2rem; margin-bottom:0.75rem;">📊</div>
+            <h4 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem;">Data Intelligence</h4>
+            <p style="color:var(--muted-foreground); font-size:0.95rem; line-height:1.6;">
+              Actionable insights for drivers, fleets, utilities & urban planners.
+            </p>
+          </div>
+        </div>
+
+      </div>
     </section>
 
     <!-- CTA Section -->
@@ -889,10 +1094,10 @@
                 <div class="footer-section">
                     <h3>Solutions</h3>
                     <ul class="footer-links">
-                        <li><a href="map.html">Charging Map</a></li>
-                        <li><a href="#what-we-do">Battery Repurposing</a></li>
-                        <li><a href="#what-we-do">Data Intelligence</a></li>
-                        <li><a href="#what-we-do">Community Energy</a></li>
+                        <li><a href="ChargingMap.html">Charging Map</a></li>
+                        <li><a href="BatteryRepurposing.html">Battery Repurposing</a></li>
+                        <li><a href="#why-safaricharge">Data Intelligence</a></li>
+                        <li><a href="WhatWeDo.html">Community Energy</a></li>
                     </ul>
                 </div>
                 
@@ -900,8 +1105,8 @@
                     <h3>Company</h3>
                     <ul class="footer-links">
                         <li><a href="#about">About</a></li>
-                        <li><a href="#vision">Vision</a></li>
-                        <li><a href="#what-we-do">What We Do</a></li>
+                        <li><a href="#about">Vision</a></li>
+                        <li><a href="WhatWeDo.html">What We Do</a></li>
                     </ul>
                 </div>
                 
@@ -1252,6 +1457,140 @@
             const bounds = L.latLngBounds(stations.map(s => [s.lat, s.lng]));
             map.fitBounds(bounds, { padding: [50, 50] });
         }
+
+/* Staggered reveal for .fade-in elements + section header underline + CTA pulse
+   - Adds 'visible' class when element first intersects viewport.
+   - If element has data-delay-ms attribute, that value is used to stagger.
+   - Respects prefers-reduced-motion.
+*/
+(function(){
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const items = Array.from(document.querySelectorAll('.fade-in'));
+  const sectionHeaders = Array.from(document.querySelectorAll('.section-header'));
+  const ctaPulse = document.querySelector('.cta-pulse');
+
+  if(prefersReduced){
+    // show everything instantly
+    items.forEach(el => el.classList.add('visible'));
+    sectionHeaders.forEach(h => h.classList.add('visible'));
+    if(ctaPulse) ctaPulse.classList.add('visible');
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const el = entry.target;
+
+        // Determine delay: prefer explicit data-delay-ms, else use dataset-index fallback or index in list
+        const explicit = el.getAttribute('data-delay-ms');
+        let delay = explicit ? parseInt(explicit,10) : (el.dataset.index ? (Number(el.dataset.index) * 90) : 0);
+
+        setTimeout(()=> {
+          el.classList.add('visible');
+          // If it's a section header, also reveal its .section-title underline
+          if(el.classList.contains('section-header')){
+            el.classList.add('visible');
+          }
+          // if it's CTA, trigger CTA pulse
+          if(el.classList.contains('cta-pulse')) el.classList.add('visible');
+        }, delay);
+
+        obs.unobserve(el);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+
+  items.forEach((el, i) => {
+    // if element has no dataset.index, give one to apply consistent staggering
+    if(!el.dataset.index) el.dataset.index = i;
+    observer.observe(el);
+  });
+
+  // also observe section-headers explicitly so underline animates only when visible
+  sectionHeaders.forEach(h => observer.observe(h));
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const overlay = document.getElementById("popup-overlay");
+
+    // Match cards to popup modals
+    document.querySelectorAll(".feature-card").forEach(card => {
+        card.addEventListener("click", (e) => {
+            if (!e.target.classList.contains("learn-more-btn")) return;
+
+            const popupKey = card.getAttribute("data-popup");
+            const popup = document.getElementById(`popup-${popupKey}`);
+
+            overlay.style.display = "block";
+            popup.style.display = "block";
+        });
+    });
+
+    // Close buttons
+    document.querySelectorAll(".close-popup").forEach(closeBtn => {
+        closeBtn.addEventListener("click", () => {
+            overlay.style.display = "none";
+            closeBtn.closest(".popup-modal").style.display = "none";
+        });
+    });
+
+    // Close when clicking overlay
+    overlay.addEventListener("click", () => {
+        overlay.style.display = "none";
+        document.querySelectorAll(".popup-modal").forEach(p => p.style.display = "none");
+    });
+});
+
     </script>
+    <!-- Popup Modals -->
+<div id="popup-overlay"></div>
+
+<div class="popup-modal" id="popup-charging-map">
+    <div class="popup-content">
+        <span class="close-popup">&times;</span>
+        <h2>Smart EV Charging Infrastructure</h2>
+        <p>
+            We deploy and integrate a growing network of EV charging locations across East Africa.
+            Our intelligent platform makes it easy for drivers to locate, access, pay, and charge
+            using real-time, reliable data.
+        </p>
+    </div>
+</div>
+
+<div class="popup-modal" id="popup-battery-systems">
+    <div class="popup-content">
+        <span class="close-popup">&times;</span>
+        <h2>Distributed Energy & Circular Systems</h2>
+        <p>
+            SafariCharge integrates solar, storage, and second-life battery technology to overcome
+            grid limitations and support energy access across communities.
+        </p>
+    </div>
+</div>
+
+<div class="popup-modal" id="popup-data-intelligence">
+    <div class="popup-content">
+        <span class="close-popup">&times;</span>
+        <h2>Insights & Data Intelligence</h2>
+        <p>
+            Our analytics engine transforms charging and energy data into insights for governments,
+            fleet operators, utilities, and city planners.
+        </p>
+    </div>
+</div>
+
+<div class="popup-modal" id="popup-community-access">
+    <div class="popup-content">
+        <span class="close-popup">&times;</span>
+        <h2>Community Electrification</h2>
+        <p>
+            We design clean-energy solutions that extend reliable power to underserved communities
+            while building resilient local economies.
+        </p>
+    </div>
+</div>
+
 </body>
 </html>

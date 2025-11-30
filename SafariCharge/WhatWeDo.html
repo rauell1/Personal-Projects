@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="SafariCharge - Building the infrastructure for clean mobility in East Africa" />
+    <title>What We Do - SafariCharge</title>
+
+    <!-- Fonts (same as main site) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== Animations & motion for About + Mission section ===== */
+        /* Variables (add to your :root if already present) */
+        :root{
+          --anim-duration: 640ms;
+          --anim-ease: cubic-bezier(.22,.9,.3,1);
+          --muted: #607477;
+          --focus-ring: 4px;
+        }
+
+        /* Base state for elements that should animate in */
+        .fade-in {
+          opacity: 0;
+          transform: translateY(18px) scale(0.995);
+          will-change: transform, opacity;
+          transition: opacity var(--anim-duration) var(--anim-ease),
+                      transform var(--anim-duration) var(--anim-ease);
+          pointer-events: auto;
+        }
+
+        /* Visible state added by JS when element enters viewport */
+        .fade-in.visible {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        /* Stagger helper — when you want explicit control in HTML, use data-delay-ms */
+        .fade-in[data-delay-ms] {
+          transition-delay: attr(data-delay-ms ms);
+        }
+
+        /* Slight transform for cards on hover + focus */
+        .fade-in:hover,
+        .fade-in:focus-within {
+          transform: translateY(-6px) scale(1.002);
+          box-shadow: 0 18px 36px rgba(2,48,36,0.06);
+          transition: transform 220ms var(--anim-ease), box-shadow 220ms linear;
+        }
+
+        /* Accessible focus-visible ring */
+        .fade-in:focus-visible {
+          outline: none;
+          box-shadow: 0 24px 60px rgba(3,166,136,0.08);
+          border-radius: 12px;
+        }
+
+        /* Heading underline grow effect */
+        .section-title {
+          position: relative;
+          display: inline-block;
+        }
+        .section-title::after{
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -0.5rem;
+          height: 4px;
+          background: linear-gradient(90deg, rgba(0,121,107,0.95), rgba(3,166,136,0.6));
+          transform: scaleX(0);
+          transform-origin: left center;
+          transition: transform 520ms var(--anim-ease);
+          border-radius: 8px;
+          opacity: 0.95;
+        }
+        /* When the section header is visible, grow the underline */
+        .section-header.visible .section-title::after{
+          transform: scaleX(1);
+        }
+
+        /* Subtle icon/emoji pop for cards' icons */
+        .fade-in .icon-pop {
+          display:inline-block;
+          transform-origin:center;
+          transform: scale(0.9);
+          transition: transform 420ms var(--anim-ease), opacity 420ms var(--anim-ease);
+          opacity: 0.95;
+        }
+        .fade-in.visible .icon-pop { transform: scale(1); opacity: 1; }
+
+        /* Value highlight micro animation (slight float) */
+        .value-highlight {
+          transform-origin: center;
+          transition: transform 420ms var(--anim-ease), box-shadow 420ms var(--anim-ease);
+        }
+        .value-highlight:hover { transform: translateY(-6px) scale(1.01); box-shadow: 0 18px 36px rgba(2,48,36,0.06); }
+
+        /* CTA micro attention (soft glow pulse) */
+        .cta-pulse {
+          position: relative;
+          overflow: visible;
+        }
+        .cta-pulse::after {
+          content: "";
+          position: absolute;
+          inset: -6px;
+          border-radius: 14px;
+          background: linear-gradient(90deg, rgba(3,166,136,0.04), rgba(0,198,161,0.02));
+          filter: blur(8px);
+          opacity: 0;
+          transform: scale(0.98);
+          transition: opacity 520ms ease, transform 520ms ease;
+        }
+        .cta-pulse.visible::after { opacity: 1; transform: scale(1); }
+
+        /* Respect reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+          .fade-in,
+          .section-title::after,
+          .fade-in .icon-pop,
+          .cta-pulse::after {
+            transition: none !important;
+            animation: none !important;
+          }
+          .fade-in { transform: none; opacity: 1; }
+          .section-title::after { transform: none; opacity: 1; }
+        }
+
+        /* ===== Main site styles (copied from original) ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: hsl(160, 84%, 39%);
+            --secondary: hsl(199, 89%, 48%);
+            --background: hsl(0, 0%, 98%);
+            --foreground: hsl(222, 47%, 11%);
+            --card: hsl(0, 0%, 100%);
+            --muted: hsl(210, 40%, 96%);
+            --muted-foreground: hsl(215, 16%, 47%);
+            --border: hsl(214, 32%, 91%);
+            --primary-dark: #075e60;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation (minimal, to match site) */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--foreground);
+            text-decoration: none;
+        }
+
+        .back-link{
+          text-decoration:none;
+          background: transparent;
+          border: 1px solid transparent;
+          color: var(--primary);
+          font-weight:600;
+          padding:6px 12px;
+          border-radius:8px;
+        }
+
+        /* Section styles */
+        section { padding: 6rem 1.5rem; }
+        .section-container { max-width: 1280px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 5rem; }
+        .section-label {
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            color: var(--foreground);
+            max-width: 70rem;
+            margin: 0 auto;
+        }
+
+        /* What We Do Section copy of original styles */
+        .services-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6rem;
+        }
+
+        .service-item {
+            display: flex;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .service-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .service-icon-wrapper { flex-shrink: 0; position: relative; }
+
+        .service-icon {
+            width: 7rem;
+            height: 7rem;
+            border-radius: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+        }
+
+        .service-icon:hover { transform: scale(1.1) rotate(-5deg); }
+        .service-icon.emerald { background: linear-gradient(135deg, #10b981, #059669); }
+        .service-icon.cyan { background: linear-gradient(135deg, #06b6d4, #0284c7); }
+        .service-icon.blue { background: linear-gradient(135deg, #0284c7, #06b6d4); }
+        .service-icon.amber { background: linear-gradient(135deg, #fbbf24, #eab308); }
+
+        .service-content { flex: 1; }
+        .service-content h3 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--foreground);
+        }
+        .service-content p {
+            font-size: 1.25rem;
+            color: var(--muted-foreground);
+            line-height: 1.8;
+        }
+
+        /* Responsive adjustments preserved */
+        @media (max-width: 768px) {
+            .service-item,
+            .service-item:nth-child(even) {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* subtle utility */
+        .page-wrap { padding-top: 5.5rem; } /* allow space for fixed nav */
+    </style>
+</head>
+<body>
+    <!-- Minimal nav so user can go back -->
+    <nav>
+        <div class="nav-container">
+            <a href="SafariCharge3.html" class="logo">
+                <span style="font-size: 1.6rem;">⚡</span>
+                SafariCharge
+            </a>
+            <div>
+              <a class="back-link" href="SafariCharge3.html" aria-label="Back to homepage">← Back to SafariCharge</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-wrap">
+      <!-- What We Do Section (exact content preserved) -->
+      <section id="what-we-do" style="background: var(--card);">
+          <div class="section-container">
+              <div class="section-header fade-in">
+                  <div class="section-label">What We Do</div>
+                  <h2 class="section-title">Building the infrastructure for clean mobility</h2>
+              </div>
+
+              <div class="services-list">
+                  <div class="service-item fade-in">
+                      <div class="service-icon-wrapper">
+                          <div class="service-icon emerald">
+                              <span style="font-size: 3.5rem;">⚡</span>
+                          </div>
+                      </div>
+                      <div class="service-content">
+                          <h3>Smart EV Charging Infrastructure</h3>
+                          <p>
+                              We deploy and integrate a growing network of EV charging locations across East Africa.
+                              Our intelligent platform makes it easy for drivers to locate, access, pay, and charge
+                              using real-time, reliable data.
+                          </p>
+                      </div>
+                  </div>
+
+                  <div class="service-item fade-in">
+                      <div class="service-icon-wrapper">
+                          <div class="service-icon cyan">
+                              <span style="font-size: 3.5rem;">♻️</span>
+                          </div>
+                      </div>
+                      <div class="service-content">
+                          <h3>Distributed Energy & Circular Systems</h3>
+                          <p>
+                              To overcome grid limitations, SafariCharge integrates solar energy, storage systems,
+                              and second-life battery technology. These solutions support charging stations, strengthen
+                              local power systems, and deliver energy to homes and businesses.
+                          </p>
+                      </div>
+                  </div>
+
+                  <div class="service-item fade-in">
+                      <div class="service-icon-wrapper">
+                          <div class="service-icon blue">
+                              <span style="font-size: 3.5rem;">📈</span>
+                          </div>
+                      </div>
+                      <div class="service-content">
+                          <h3>Insights & Data Intelligence</h3>
+                          <p>
+                              Our analytics engine turns charging and energy data into actionable insights for
+                              governments, fleet operators, utilities, energy developers, and innovators — supporting
+                              smarter planning and efficient deployment.
+                          </p>
+                      </div>
+                  </div>
+
+                  <div class="service-item fade-in">
+                      <div class="service-icon-wrapper">
+                          <div class="service-icon amber">
+                              <span style="font-size: 3.5rem;">🏠</span>
+                          </div>
+                      </div>
+                      <div class="service-content">
+                          <h3>Community Electrification</h3>
+                          <p>
+                              We design clean-energy solutions that extend power access to underserved areas,
+                              helping communities grow resilient local economies and participate in the clean-energy transition.
+                          </p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+    </div>
+
+    <!-- Preserve the same intersection observer animation logic as on the original page -->
+    <script>
+    (function(){
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const items = Array.from(document.querySelectorAll('.fade-in'));
+      const sectionHeaders = Array.from(document.querySelectorAll('.section-header'));
+      const ctaPulse = document.querySelector('.cta-pulse');
+
+      if(prefersReduced){
+        items.forEach(el => el.classList.add('visible'));
+        sectionHeaders.forEach(h => h.classList.add('visible'));
+        if(ctaPulse) ctaPulse.classList.add('visible');
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            const el = entry.target;
+
+            // Determine delay: prefer explicit data-delay-ms, else use dataset-index fallback or index in list
+            const explicit = el.getAttribute('data-delay-ms');
+            let delay = explicit ? parseInt(explicit,10) : (el.dataset.index ? (Number(el.dataset.index) * 90) : 0);
+
+            setTimeout(()=> {
+              el.classList.add('visible');
+              if(el.classList.contains('section-header')){
+                el.classList.add('visible');
+              }
+              if(el.classList.contains('cta-pulse')) el.classList.add('visible');
+            }, delay);
+
+            obs.unobserve(el);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+
+      items.forEach((el, i) => {
+        if(!el.dataset.index) el.dataset.index = i;
+        observer.observe(el);
+      });
+
+      sectionHeaders.forEach(h => observer.observe(h));
+    })();
+    </script>
+
+</body>
+</html>

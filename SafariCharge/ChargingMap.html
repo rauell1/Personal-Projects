@@ -11,100 +11,164 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
     body { background: #fafbfc; color: #1a1f2e; }
-    
-    .container { display: flex; height: 100vh; gap: 18px; padding: 18px; }
-    
+
+    /* NAVBAR */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7));
+      border-bottom: 1px solid #eef3f8;
+      backdrop-filter: blur(6px);
+      z-index: 1100;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+    }
+    .topbar .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .brand .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg,#10b981,#06b6d4);
+      display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px;box-shadow:0 6px 18px rgba(16,185,129,0.12);
+    }
+    .brand .title {
+      display:flex;flex-direction:column;
+    }
+    .brand .title .name { font-weight:700; font-size:16px; color:#0f172a; }
+    .brand .title .tag { font-size:12px; color:#6b7280; }
+
+    .nav-actions {
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .nav-link {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-weight:600;
+      cursor:pointer;
+      color:#0f172a;
+      text-decoration:none;
+      transition: all .15s;
+    }
+    .nav-link:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(2,6,23,0.04); background: rgba(6,182,212,0.06); }
+    .btn-primary {
+      background: linear-gradient(90deg,#10b981,#06b6d4);
+      color: #fff;
+      border: none;
+      padding: 9px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight:700;
+      transition: transform .12s, box-shadow .12s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(6,182,212,0.16); }
+
+    /* Page layout - account for fixed navbar */
+    .page {
+      padding-top: 92px; /* space for fixed topbar */
+    }
+
+    .container { display: flex; height: calc(100vh - 92px); gap: 18px; padding: 18px; }
+
     /* Sidebar */
-    .sidebar { 
-      width: 360px; 
-      min-width: 260px; 
-      max-width: 420px; 
-      background: #fff; 
-      border-radius: 12px; 
-      box-shadow: 0 8px 30px rgba(2,6,23,0.06); 
-      padding: 16px; 
-      display: flex; 
+    .sidebar {
+      width: 360px;
+      min-width: 260px;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(2,6,23,0.06);
+      padding: 16px;
+      display: flex;
       flex-direction: column;
     }
-    
-    .search { 
-      width: 100%; 
-      padding: 10px 12px; 
-      border-radius: 10px; 
-      border: 1px solid #e6edf3; 
+
+    .search {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #e6edf3;
       margin-bottom: 10px;
       font-size: 14px;
     }
-    
+
     .search:focus {
       outline: none;
       border-color: #10b981;
       box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
     }
-    
-    .controls { 
-      display: flex; 
-      gap: 8px; 
+
+    .controls {
+      display: flex;
+      gap: 8px;
       margin-bottom: 10px;
     }
-    
-    .btn { 
-      padding: 8px 10px; 
-      border-radius: 8px; 
-      border: 1px solid #e6edf3; 
-      background: #fff; 
+
+    .btn {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #e6edf3;
+      background: #fff;
       cursor: pointer;
       font-size: 13px;
       font-weight: 500;
       transition: all 0.2s;
     }
-    
+
     .btn:hover {
       background: linear-gradient(90deg, #10b981, #06b6d4);
       color: white;
       border-color: transparent;
     }
-    
-    .list { 
-      overflow: auto; 
-      display: flex; 
-      flex-direction: column; 
+
+    .list {
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
       gap: 10px;
       flex: 1;
     }
-    
+
     .list::-webkit-scrollbar { width: 6px; }
     .list::-webkit-scrollbar-track { background: #f5f5f5; border-radius: 10px; }
     .list::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
-    
-    .card { 
-      padding: 10px; 
-      border-radius: 10px; 
-      border: 1px solid #eef3f8; 
-      background: linear-gradient(180deg, #fff, #fbfdff); 
+
+    .card {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #eef3f8;
+      background: linear-gradient(180deg, #fff, #fbfdff);
       cursor: pointer;
       transition: all 0.2s;
     }
-    
+
     .card:hover {
       border-color: #10b981;
       box-shadow: 0 4px 12px rgba(16,185,129,0.15);
       transform: translateY(-2px);
     }
-    
-    .card.active { 
-      border-color: #10b981; 
+
+    .card.active {
+      border-color: #10b981;
       box-shadow: 0 8px 20px rgba(16,185,129,0.08);
       background: linear-gradient(135deg, rgba(16,185,129,0.05), rgba(6,182,212,0.05));
     }
-    
-    .card-header {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      margin-bottom: 8px;
-    }
-    
+
+    .card-header { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+
     .card-icon {
       width: 40px;
       height: 40px;
@@ -115,181 +179,207 @@
       justify-content: center;
       font-size: 18px;
       flex-shrink: 0;
+      color: #fff;
     }
-    
+
     .card-info { flex: 1; min-width: 0; }
-    
-    .card-name {
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-    
-    .card-county {
-      font-size: 12px;
-      color: #6b7280;
-      font-weight: 500;
-    }
-    
-    .connector { 
-      display: inline-block; 
-      background: #eef2ff; 
-      padding: 4px 8px; 
-      border-radius: 999px; 
-      margin-right: 6px; 
+
+    .card-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+
+    .card-county { font-size: 12px; color: #6b7280; font-weight: 500; }
+
+    .connector {
+      display: inline-block;
+      background: #eef2ff;
+      padding: 4px 8px;
+      border-radius: 999px;
+      margin-right: 6px;
       font-size: 12px;
       margin-top: 6px;
     }
-    
-    .card-actions {
-      display: flex;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    
-    .card-actions .btn {
-      flex: 1;
-      padding: 6px 8px;
-      font-size: 12px;
-    }
-    
+
+    .card-actions { display: flex; gap: 6px; margin-top: 8px; }
+
+    .card-actions .btn { flex: 1; padding: 6px 8px; font-size: 12px; }
+
     /* Expandable Details */
-    .card-details {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease-out;
-    }
-    
-    .card-details.expanded {
-      max-height: 1000px;
-      transition: max-height 0.5s ease-in;
-    }
-    
-    .detail-section {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid #eef3f8;
-    }
-    
-    .detail-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
-    }
-    
-    .station-image {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
-    
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      margin-bottom: 4px;
-    }
-    
-    .detail-label {
-      font-weight: 600;
-      color: #374151;
-    }
-    
-    .detail-value {
-      color: #6b7280;
-    }
-    
-    .vehicle-item {
-      background: rgba(16,185,129,0.05);
-      border: 1px solid rgba(16,185,129,0.15);
-      border-radius: 6px;
-      padding: 6px 8px;
-      margin-bottom: 6px;
-      font-size: 11px;
-    }
-    
-    .vehicle-name {
-      font-weight: 700;
-      color: #1a1f2e;
-      margin-bottom: 2px;
-    }
-    
-    .vehicle-specs {
-      color: #6b7280;
-      font-size: 10px;
-      line-height: 1.3;
-    }
-    
+    .card-details { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+    .card-details.expanded { max-height: 1000px; transition: max-height 0.5s ease-in; }
+    .detail-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid #eef3f8; }
+    .detail-title { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .station-image { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
+    .detail-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+    .detail-label { font-weight: 600; color: #374151; }
+    .detail-value { color: #6b7280; }
+    .vehicle-item { background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.15); border-radius: 6px; padding: 6px 8px; margin-bottom: 6px; font-size: 11px; }
+    .vehicle-name { font-weight: 700; color: #1a1f2e; margin-bottom: 2px; }
+    .vehicle-specs { color: #6b7280; font-size: 10px; line-height: 1.3; }
+
     /* Map Container */
-    .map-wrap { 
-      flex: 1; 
-      border-radius: 12px; 
-      overflow: hidden; 
-      box-shadow: 0 8px 30px rgba(2,6,23,0.06); 
-      position: relative;
-    }
-    
+    .map-wrap { flex: 1; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 30px rgba(2,6,23,0.06); position: relative; }
     #map { width: 100%; height: 100%; }
-    
+
     /* FAB Button */
-    .fab { 
-      position: absolute; 
-      right: 16px; 
-      bottom: 16px; 
-      z-index: 999; 
-      background: linear-gradient(90deg, #10b981, #06b6d4); 
-      color: #fff; 
-      padding: 10px 12px; 
-      border-radius: 999px; 
-      border: none; 
-      cursor: pointer; 
+    .fab {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      z-index: 999;
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
       font-weight: 700;
       box-shadow: 0 4px 12px rgba(16,185,129,0.3);
       transition: all 0.2s;
     }
-    
-    .fab:hover {
-      box-shadow: 0 6px 16px rgba(16,185,129,0.4);
-      transform: translateY(-2px);
-    }
-    
-    /* Responsive */
-    @media(max-width:900px) { 
-      .container { flex-direction: column; padding: 10px; gap: 10px; } 
-      .sidebar { width: 100%; height: 42vh; } 
+    .fab:hover { box-shadow: 0 6px 16px rgba(16,185,129,0.4); transform: translateY(-2px); }
+
+    /* Contact Modal */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(2,6,23,0.4); display: none; align-items: center; justify-content: center; z-index: 1200; }
+    .modal { width: 420px; max-width: 94%; background: #fff; border-radius: 12px; padding: 18px; box-shadow: 0 12px 40px rgba(2,6,23,0.2); }
+    .modal h3 { margin-bottom: 8px; font-size: 18px; }
+    .modal p { margin-bottom: 12px; color: #6b7280; font-size: 13px; }
+    .modal .form-row { display:flex; gap:8px; margin-bottom:10px; }
+    .modal input[type="text"], .modal input[type="email"], .modal textarea { width:100%; padding:10px; border-radius:8px; border:1px solid #eef3f8; font-size:14px; }
+    .modal textarea { min-height:100px; resize:vertical; }
+    .modal .modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
+    .close-btn { background:transparent;border:1px solid #eef3f8;padding:8px 10px;border-radius:8px;cursor:pointer; }
+    .send-btn { background:linear-gradient(90deg,#10b981,#06b6d4); border:none;color:#fff;padding:8px 12px;border-radius:8px; cursor:pointer; font-weight:700; }
+
+    /* Responsive tweaks */
+    @media(max-width:900px) {
+      .page { padding-top: 80px; }
+      .container { flex-direction: column; padding: 10px; gap: 10px; height: calc(100vh - 80px); }
+      .sidebar { width: 100%; height: 42vh; }
       .map-wrap { height: calc(100vh - 42vh - 20px); }
+      .topbar { height: 56px; padding: 0 12px; }
+      .brand .title .name { font-size:14px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <aside class="sidebar">
-      <h3 style="margin:0 0 8px 0">Charging Stations</h3>
-      <input id="search" class="search" placeholder="Search by name, county or connector" />
-      <div class="controls">
-        <select id="countyFilter" style="flex:1;padding:8px;border-radius:8px;border:1px solid #e6edf3">
-          <option value="">All counties</option>
-        </select>
-        <button id="reset" class="btn">Reset</button>
+  <!-- TOP NAVBAR -->
+  <header class="topbar" role="banner">
+    <div class="brand" aria-hidden="false">
+      <div class="logo">⚡</div>
+      <div class="title">
+        <div class="name">SafariCharge</div>
+        <div class="tag">Interactive Charging Map</div>
       </div>
-      <div id="list" class="list"></div>
-    </aside>
+    </div>
 
-    <div class="map-wrap">
-      <div id="map"></div>
-      <button id="locFab" class="fab">📍 My location</button>
+    <nav class="nav-actions" role="navigation" aria-label="Main navigation">
+      <!-- Home: replace href with actual main page URL if available -->
+      <a class="nav-link" href="SafariCharge3.html" title="Back to main page">Home</a>
+
+      <!-- Contact will open modal -->
+      <button id="contactBtn" class="nav-link" aria-haspopup="dialog" title="Contact us">Contact</button>
+
+
+    </nav>
+  </header>
+
+  <main class="page" role="main">
+    <div class="container">
+      <aside class="sidebar" aria-labelledby="stations-heading">
+        <h3 id="stations-heading" style="margin:0 0 8px 0">Charging Stations</h3>
+        <input id="search" class="search" placeholder="Search by name, county or connector" />
+        <div class="controls">
+          <select id="countyFilter" style="flex:1;padding:8px;border-radius:8px;border:1px solid #e6edf3">
+            <option value="">All counties</option>
+          </select>
+          <button id="reset" class="btn">Reset</button>
+        </div>
+        <div id="list" class="list" role="list"></div>
+      </aside>
+
+      <div class="map-wrap" aria-label="Map region">
+        <div id="map"></div>
+        <button id="locFab" class="fab">📍 My location</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- CONTACT MODAL -->
+  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="contactTitle">
+      <h3 id="contactTitle">Contact SafariCharge</h3>
+      <p>Send us a message - we'll get back to you within 1 business day.</p>
+
+      <div>
+        <div class="form-row">
+          <input id="contactName" type="text" placeholder="Your name" />
+        </div>
+        <div class="form-row">
+          <input id="contactEmail" type="email" placeholder="Your email" />
+        </div>
+        <div class="form-row">
+          <textarea id="contactMessage" placeholder="How can we help?"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="close-btn" id="modalClose">Cancel</button>
+          <button class="send-btn" id="modalSend">Send</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
   <script>
-    // Kenya EV Market Vehicle Database
+    /* ========== NAVBAR / MODAL BEHAVIOUR ========== */
+    const contactBtn = document.getElementById('contactBtn');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalClose = document.getElementById('modalClose');
+    const modalSend = document.getElementById('modalSend');
+
+    function openModal() {
+      modalBackdrop.style.display = 'flex';
+      modalBackdrop.setAttribute('aria-hidden', 'false');
+      // focus first input for accessibility
+      setTimeout(()=>document.getElementById('contactName').focus(), 120);
+    }
+    function closeModal() {
+      modalBackdrop.style.display = 'none';
+      modalBackdrop.setAttribute('aria-hidden', 'true');
+    }
+
+    contactBtn.addEventListener('click', openModal);
+    modalClose.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) closeModal(); });
+
+    modalSend.addEventListener('click', () => {
+      const name = document.getElementById('contactName').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const message = document.getElementById('contactMessage').value.trim();
+      if (!name || !email || !message) {
+        alert('Please fill name, email and message before sending.');
+        return;
+      }
+
+      // Simple client-side "send" behaviour — replace with server call / email API for production
+      const subject = encodeURIComponent('SafariCharge contact from ' + name);
+      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+      // open user's mail client as fallback
+      window.location.href = `mailto:hello@safaricharge.example?subject=${subject}&body=${body}`;
+      closeModal();
+    });
+
+    // keyboard accessibility
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { // quick focus search
+        e.preventDefault();
+        document.getElementById('search').focus();
+      }
+    });
+
+    /* ========== MAP + UI (kept from your previous file, unchanged logic) ========== */
+
+     // Kenya EV Market Vehicle Database
     const kenyaEVs = {
       'Tesla Model 3': { charging: 'Type 2 AC, CCS2 DC', battery: '60-82 kWh', range: '430-629 km', power: '208-377 kW' },
       'Tesla Model Y': { charging: 'Type 2 AC, CCS2 DC', battery: '60-82 kWh', range: '430-533 km', power: '208-377 kW' },
@@ -397,9 +487,27 @@
       return L.divIcon({ html: '<div style="width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,#10b981,#06b6d4);border:3px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.25);position:relative"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(45deg);font-size:14px">⚡</span></div>', className: '', iconSize:[28,28], iconAnchor:[14,28], popupAnchor:[0,-28] });
     }
 
+    function buildPopupContent(s, i) {
+      const vehiclesHTML = (s.compatibleVehicles || []).slice(0, 8).map(v => {
+        const data = kenyaEVs[v] || {};
+        return `<div style="font-size:12px;margin-top:6px">• <strong>${v}</strong> ${data.battery ? ` — ${data.battery}, ${data.range}` : ''}</div>`;
+      }).join('');
+      return `<div style="min-width:220px">
+                <strong style="display:block;margin-bottom:6px">${s.name}</strong>
+                <small style="color:#6b7280;display:block;margin-bottom:8px">${s.county} County</small>
+                <div style="margin-bottom:8px">${s.connectors.join(' • ')}</div>
+                <img src="${s.image}" alt="${s.name}" style="width:100%;height:110px;object-fit:cover;border-radius:8px;margin-bottom:8px" onerror="this.src='https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=400'"/>
+                ${vehiclesHTML ? `<div style="margin-top:8px"><strong style="font-size:13px">Compatible vehicles</strong>${vehiclesHTML}</div>` : ''}
+                <div style="margin-top:10px;display:flex;gap:8px">
+                  <button style="flex:1;padding:8px;border-radius:8px;border:none;background:linear-gradient(90deg,#10b981,#06b6d4);color:#fff;cursor:pointer" onclick="focusStation(${i})">Open</button>
+                  <button style="flex:1;padding:8px;border-radius:8px;border:1px solid #06b6d4;background:#fff;color:#06b6d4;cursor:pointer" onclick="openDirections(${i})">Drive</button>
+                </div>
+              </div>`;
+    }
+
     stations.forEach((s, i) => {
       const m = L.marker([s.lat, s.lng], { icon: createIcon() }).addTo(markerLayer);
-      m.bindPopup(`<strong>${s.name}</strong><br/><small>${s.county}</small><br/><div style="margin-top:8px">${s.connectors.join(' • ')}</div><div style="margin-top:8px"><button onclick=window.openDirections(${i}) style="padding:.5rem 0.75rem;border-radius:.5rem;border:none;background:linear-gradient(90deg,#10b981,#06b6d4);color:#fff;cursor:pointer">Get Directions</button></div>`);
+      m.bindPopup(buildPopupContent(s, i));
       markers.push(m);
       m.on('click', () => setActive(i));
     });
@@ -411,8 +519,8 @@
         const idx = stations.indexOf(s);
         const card = document.createElement('div');
         card.className = 'card' + (idx===activeIndex ? ' active' : '');
-        
-        const vehiclesHTML = s.compatibleVehicles.slice(0, 5).map(vName => {
+
+        const vehiclesHTML = (s.compatibleVehicles || []).slice(0, 5).map(vName => {
           const vData = kenyaEVs[vName] || {};
           return `
             <div class="vehicle-item">
@@ -421,7 +529,7 @@
             </div>
           `;
         }).join('');
-        
+
         card.innerHTML = `
           <div class="card-header">
             <div class="card-icon">⚡</div>
@@ -434,19 +542,13 @@
           <div class="card-actions">
             <button class="btn" onclick="focusStation(${idx})">View Map</button>
             <button class="btn" onclick="openDirections(${idx})">Drive</button>
-            <button class="btn" onclick="toggleDetails(${idx})">Details</button>
+            <button class="btn" onclick="toggleDetails(event, ${idx})">Details</button>
           </div>
           <div class="card-details" id="details-${idx}">
             <div class="detail-section">
               <img src="${s.image}" class="station-image" onerror="this.src='https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=400'" />
-              <div class="detail-row">
-                <span class="detail-label">Speed:</span>
-                <span class="detail-value">${s.speed}</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">Power:</span>
-                <span class="detail-value">${s.power}</span>
-              </div>
+              <div class="detail-row"><span class="detail-label">Speed:</span><span class="detail-value">${s.speed}</span></div>
+              <div class="detail-row"><span class="detail-label">Power:</span><span class="detail-value">${s.power}</span></div>
               <p style="font-size:12px;color:#6b7280;margin:8px 0">${s.description}</p>
               <div class="detail-title">Compatible Vehicles</div>
               ${vehiclesHTML}
@@ -458,10 +560,10 @@
       });
     }
 
-    function toggleDetails(idx) {
+    function toggleDetails(e, idx) {
+      e.stopPropagation();
       const details = document.getElementById(`details-${idx}`);
-      details.classList.toggle('expanded');
-      event.stopPropagation();
+      if (details) details.classList.toggle('expanded');
     }
     window.toggleDetails = toggleDetails;
 
@@ -514,7 +616,8 @@
     document.getElementById('reset').addEventListener('click', ()=>{ document.getElementById('search').value=''; document.getElementById('countyFilter').value=''; filter(); clearRoute(); });
 
     const uniq = [...new Set(stations.map(s=>s.county))].sort();
-    const sel = document.getElementById('countyFilter'); uniq.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+    const sel = document.getElementById('countyFilter');
+    uniq.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
 
     document.getElementById('locFab').addEventListener('click', ()=>{
       if(!navigator.geolocation){ alert('Geolocation not supported'); return; }
@@ -522,7 +625,8 @@
     });
 
     filter();
-    const bounds = L.latLngBounds(stations.map(s=>[s.lat,s.lng])); map.fitBounds(bounds.pad(0.15));
+    const bounds = L.latLngBounds(stations.map(s=>[s.lat,s.lng]));
+    map.fitBounds(bounds.pad(0.15));
   </script>
 </body>
 </html>
