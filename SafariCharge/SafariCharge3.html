@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SafariCharge - Accelerating Kenya's Clean Mobility Future with intelligent EV charging infrastructure and circular energy systems">
+    <title>SafariCharge - EV Charging Infrastructure Kenya</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: hsl(160, 84%, 39%);
+            --secondary: hsl(199, 89%, 48%);
+            --background: hsl(0, 0%, 98%);
+            --foreground: hsl(222, 47%, 11%);
+            --card: hsl(0, 0%, 100%);
+            --muted: hsl(210, 40%, 96%);
+            --muted-foreground: hsl(215, 16%, 47%);
+            --border: hsl(214, 32%, 91%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--foreground);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted-foreground);
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding-top: 4rem;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.95), rgba(2, 132, 199, 0.9), rgba(5, 150, 105, 0.95));
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 5rem 1.5rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 7vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            color: white;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-gradient-text {
+            background: linear-gradient(90deg, #6ee7b7, #a5f3fc, #6ee7b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: clamp(1.125rem, 3vw, 1.5rem);
+            color: white;
+            max-width: 60rem;
+            margin: 0 auto 2.5rem;
+            line-height: 1.8;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+
+        .hero-card {
+            max-width: 48rem;
+            margin: 4rem auto 0;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(24px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.5s;
+        }
+
+        .hero-card:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-card-content {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .hero-card-icon {
+            flex-shrink: 0;
+            width: 4rem;
+            height: 4rem;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #34d399, #22d3ee);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(52, 211, 153, 0.3);
+        }
+
+        .hero-card h3 {
+            font-size: 1.75rem;
+            color: white;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-card p {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin: 0;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 6rem 1.5rem;
+        }
+
+        .section-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-label {
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            color: var(--foreground);
+            max-width: 70rem;
+            margin: 0 auto;
+        }
+
+        /* Why SafariCharge Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.5s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, #d1fae5, #a5f3fc);
+            color: #059669;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            color: white;
+            transform: scale(1.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--foreground);
+        }
+
+        .feature-card p {
+            color: var(--muted-foreground);
+            line-height: 1.7;
+        }
+
+        /* What We Do Section */
+        .services-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6rem;
+        }
+
+        .service-item {
+            display: flex;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .service-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .service-icon-wrapper {
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .service-icon {
+            width: 7rem;
+            height: 7rem;
+            border-radius: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+        }
+
+        .service-icon:hover {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .service-icon.emerald {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .service-icon.cyan {
+            background: linear-gradient(135deg, #06b6d4, #0284c7);
+        }
+
+        .service-icon.blue {
+            background: linear-gradient(135deg, #0284c7, #06b6d4);
+        }
+
+        .service-icon.amber {
+            background: linear-gradient(135deg, #fbbf24, #eab308);
+        }
+
+        .service-content {
+            flex: 1;
+        }
+
+        .service-content h3 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--foreground);
+        }
+
+        .service-content p {
+            font-size: 1.25rem;
+            color: var(--muted-foreground);
+            line-height: 1.8;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--primary);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+            opacity: 0.9;
+        }
+
+        .cta-pattern {
+            position: absolute;
+            inset: 0;
+            opacity: 0.05;
+            background-image: radial-gradient(circle, white 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-content h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            max-width: 40rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--primary);
+            padding: 1.5rem 2.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1.125rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+        }
+
+        .btn-white:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            background: #1f2937;
+            color: #9ca3af;
+            padding: 3rem 1.5rem;
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            color: #d1d5db;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(12px); }
+        }
+
+        /* Icons (using Unicode symbols) */
+        .icon {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .service-item,
+            .service-item:nth-child(even) {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cta-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-card-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Fade-in animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Map Section Styles */
+        .location-card {
+            background: linear-gradient(180deg, #fff, #fafbfc);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .location-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .location-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .connector-badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: var(--foreground);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin: 0.25rem 0.25rem 0 0;
+        }
+
+        @media (max-width: 900px) {
+            #map > div > div {
+                flex-direction: column;
+            }
+            #mapSidebar {
+                flex: 0 0 auto !important;
+                height: 45vh;
+                width: 100%;
+            }
+        }
+
+        #myLocationBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Leaflet custom marker styles */
+        .custom-marker-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .custom-marker-icon::after {
+            content: '⚡';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            font-size: 16px;
+        }
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 1rem !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+        }
+
+        .leaflet-popup-content {
+            margin: 1rem !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+    </style>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span style="font-size: 2rem;">⚡</span>
+                SafariCharge
+            </a>
+            <ul class="nav-links">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#what-we-do">What We Do</a></li>
+                <a href="ChargingMap.html" target="_blank" rel="noopener" class="btn-primary">Charging Map</a>
+
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact" class="btn-primary">Get Started</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <video class="hero-video" autoplay loop muted playsinline>
+            <source src="https://cdn.coverr.co/videos/coverr-electric-car-charging-7297/1080p.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-grid"></div>
+        
+        <div class="hero-content">
+            <h1>
+                Accelerating Kenya's<br>
+                <span class="hero-gradient-text">Clean Mobility Future</span>
+            </h1>
+            
+            <p>
+                SafariCharge is the intelligent map and digital backbone for EV charging 
+                and circular energy systems — enabling drivers, businesses, and communities 
+                to access reliable, smart, and sustainable power.
+            </p>
+            
+            <div class="hero-buttons">
+                <a href="map.html" class="btn-primary" style="font-size: 1.125rem; padding: 1.5rem 2.5rem;">
+                    Explore Charging Map →
+                </a>
+                <a href="#contact" class="btn-secondary">
+                    Partner With Us
+                </a>
+            </div>
+            
+            <div class="hero-card">
+                <div class="hero-card-content">
+                    <div class="hero-card-icon">
+                        <span style="font-size: 2rem;">🔋</span>
+                    </div>
+                    <div>
+                        <h3>🔋 Battery Repurposing</h3>
+                        <p>
+                            Second-life storage powering charging stations where the grid is weak — 
+                            making clean mobility accessible, resilient, and affordable.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <span style="font-size: 2.5rem; color: rgba(255, 255, 255, 0.8);">↓</span>
+        </div>
+    </section>
+
+    <!-- Why SafariCharge Section -->
+    <section id="why" style="background: var(--background);">
+        <div class="section-container">
+            <div class="section-header fade-in">
+                <div class="section-label">Why SafariCharge</div>
+                <h2 class="section-title">
+                    A smart, circular, and connected platform accelerating Kenya's transition 
+                    to electric mobility
+                </h2>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <span style="font-size: 1.75rem;">🗺️</span>
+                    </div>
+                    <h3>Real-Time Charging Map</h3>
+                    <p>Locate, navigate, and charge effortlessly with live data on charger availability and status.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <span style="font-size: 1.75rem;">🔋</span>
+                    </div>
+                    <h3>Second-Life Battery Systems</h3>
+                    <p>Powering stations and communities with repurposed EV batteries for resilient energy access.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <span style="font-size: 1.75rem;">📊</span>
+                    </div>
+                    <h3>Data Intelligence</h3>
+                    <p>Actionable insights for drivers, fleets, utilities, and city planners to optimize infrastructure.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <span style="font-size: 1.75rem;">👥</span>
+                    </div>
+                    <h3>Community Access</h3>
+                    <p>Clean, affordable energy solutions delivered where it's needed most across East Africa.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What We Do Section -->
+    <section id="what-we-do" style="background: var(--card);">
+        <div class="section-container">
+            <div class="section-header fade-in">
+                <div class="section-label">What We Do</div>
+                <h2 class="section-title">Building the infrastructure for clean mobility</h2>
+            </div>
+            
+            <div class="services-list">
+                <div class="service-item fade-in">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon emerald">
+                            <span style="font-size: 3.5rem;">⚡</span>
+                        </div>
+                    </div>
+                    <div class="service-content">
+                        <h3>Smart EV Charging Infrastructure</h3>
+                        <p>
+                            We deploy and integrate a growing network of EV charging locations across East Africa. 
+                            Our intelligent platform makes it easy for drivers to locate, access, pay, and charge 
+                            using real-time, reliable data.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="service-item fade-in">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon cyan">
+                            <span style="font-size: 3.5rem;">♻️</span>
+                        </div>
+                    </div>
+                    <div class="service-content">
+                        <h3>Distributed Energy & Circular Systems</h3>
+                        <p>
+                            To overcome grid limitations, SafariCharge integrates solar energy, storage systems, 
+                            and second-life battery technology. These solutions support charging stations, strengthen 
+                            local power systems, and deliver energy to homes and businesses.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="service-item fade-in">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon blue">
+                            <span style="font-size: 3.5rem;">📈</span>
+                        </div>
+                    </div>
+                    <div class="service-content">
+                        <h3>Insights & Data Intelligence</h3>
+                        <p>
+                            Our analytics engine turns charging and energy data into actionable insights for 
+                            governments, fleet operators, utilities, energy developers, and innovators — supporting 
+                            smarter planning and efficient deployment.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="service-item fade-in">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon amber">
+                            <span style="font-size: 3.5rem;">🏠</span>
+                        </div>
+                    </div>
+                    <div class="service-content">
+                        <h3>Community Electrification</h3>
+                        <p>
+                            We design clean-energy solutions that extend power access to underserved areas, 
+                            helping communities grow resilient local economies and participate in the clean-energy transition.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact" class="cta-section">
+        <div class="cta-overlay"></div>
+        <div class="cta-pattern"></div>
+        
+        <div class="section-container">
+            <div class="cta-content">
+                <h2>Ready to join the clean mobility revolution?</h2>
+                <div class="cta-buttons">
+                    <a href="mailto:royokola3@gmail.com" class="btn-white">
+                        📧 Email Us
+                    </a>
+                    <a href="tel:+254726683835" class="btn-white">
+                        📞 Call Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Solutions</h3>
+                    <ul class="footer-links">
+                        <li><a href="map.html">Charging Map</a></li>
+                        <li><a href="#what-we-do">Battery Repurposing</a></li>
+                        <li><a href="#what-we-do">Data Intelligence</a></li>
+                        <li><a href="#what-we-do">Community Energy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#vision">Vision</a></li>
+                        <li><a href="#what-we-do">What We Do</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><a href="#contact">Partner With Us</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Get In Touch</h3>
+                    <ul class="footer-links">
+                        <li><a href="mailto:royokola3@gmail.com">📧 royokola3@gmail.com</a></li>
+                        <li><a href="tel:+254726683835">📞 +254 726 683 835</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                © 2025 SafariCharge. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for scroll animations and smooth scrolling -->
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with fade-in class
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add stagger delay to feature cards
+        document.querySelectorAll('.feature-card').forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.15}s`;
+        });
+
+        document.querySelectorAll('.service-item').forEach((item, index) => {
+            item.style.transitionDelay = `${index * 0.1}s`;
+        });
+
+        // ========== MAP FUNCTIONALITY ==========
+        // Load Leaflet and routing machine scripts
+        const leafletScript = document.createElement('script');
+        leafletScript.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        leafletScript.crossOrigin = '';
+        leafletScript.onload = () => {
+            const routingScript = document.createElement('script');
+            routingScript.src = 'https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js';
+            routingScript.onload = initMap;
+            document.head.appendChild(routingScript);
+        };
+        document.head.appendChild(leafletScript);
+
+        function initMap() {
+            // Pre-loaded charging stations with coordinates
+            const stations = [
+                { name: 'Waterfront, Karen', county: 'Nairobi', connectors: ['AC Type 1', 'Type 2'], lat: -1.3326, lng: 36.6965 },
+                { name: 'The Well, Karen', county: 'Nairobi', connectors: ['AC Type 1', 'Type 2', 'DC CHAdeMO', 'DC CCS2'], lat: -1.3254, lng: 36.7086 },
+                { name: "Karen C, Lang'ata Road", county: 'Nairobi', connectors: ['AC'], lat: -1.3235, lng: 36.7197 },
+                { name: 'Karen 31 off Ngong Rd', county: 'Nairobi', connectors: ['AC Type 2', 'CCS2', 'GBT'], lat: -1.3199, lng: 36.7318 },
+                { name: 'Adlife, Kilimani', county: 'Nairobi', connectors: ['AC'], lat: -1.2921, lng: 36.7820 },
+                { name: 'Sarit Centre, Westlands', county: 'Nairobi', connectors: ['AC', 'DC CHAdeMO'], lat: -1.2625, lng: 36.8017 },
+                { name: 'UNGA House, Westlands', county: 'Nairobi', connectors: ['Type 2'], lat: -1.2642, lng: 36.8063 },
+                { name: 'ABC Place, Westlands', county: 'Nairobi', connectors: ['AC', 'DC'], lat: -1.2637, lng: 36.8091 },
+                { name: 'Standard Chartered, Chiromo', county: 'Nairobi', connectors: ['AC Type 2'], lat: -1.2710, lng: 36.8087 },
+                { name: 'Mövenpick, Westlands', county: 'Nairobi', connectors: ['AC Type 2'], lat: -1.2651, lng: 36.8077 },
+                { name: 'Village Market, Gigiri', county: 'Nairobi', connectors: ['AC'], lat: -1.2382, lng: 36.8041 },
+                { name: 'Two Rivers Mall, Runda', county: 'Nairobi', connectors: ['AC Type 2'], lat: -1.2242, lng: 36.8536 },
+                { name: 'KCB Towers, Upper Hill', county: 'Nairobi', connectors: ['Type 2 AC'], lat: -1.2891, lng: 36.8213 },
+                { name: 'NCBA HQ, Ragati Road, Upper Hill', county: 'Nairobi', connectors: ['Type 2 AC'], lat: -1.2897, lng: 36.8190 },
+                { name: 'NCBA Masaba, Upper Hill', county: 'Nairobi', connectors: ['Type 2 AC'], lat: -1.2903, lng: 36.8179 },
+                { name: 'Britam Towers, Upper Hill', county: 'Nairobi', connectors: ['AC Type 2'], lat: -1.2876, lng: 36.8203 },
+                { name: 'CPF House, CBD', county: 'Nairobi', connectors: ['DC'], lat: -1.2834, lng: 36.8217 },
+                { name: 'JKIA', county: 'Nairobi', connectors: ['Type 1', 'Type 2 AC', 'DC CHAdeMO'], lat: -1.3192, lng: 36.9275 },
+                { name: 'Basigo Depot, Embakasi', county: 'Nairobi', connectors: ['CCS2', 'GBT'], lat: -1.3158, lng: 36.8939 },
+                { name: 'Roam Hub, Kayole', county: 'Nairobi', connectors: ['DC CCS2'], lat: -1.2729, lng: 36.9132 },
+                { name: 'Roam Park, ICD Road', county: 'Nairobi', connectors: ['DC CCS2'], lat: -1.3041, lng: 36.8913 },
+                { name: 'Total, Hurlingham', county: 'Nairobi', connectors: ['DC CCS2', 'AC Type 2'], lat: -1.2913, lng: 36.7797 },
+                { name: 'Stima Plaza, Parklands', county: 'Nairobi', connectors: ['DC CCS2', 'AC Type 2'], lat: -1.2647, lng: 36.8241 },
+                { name: 'Atlas Auto Service Centre, Thika Road', county: 'Nairobi', connectors: ['AC Type 2', 'DC GBT'], lat: -1.2298, lng: 36.8871 },
+                { name: 'Kamakis, Next to Kamakis Corner Square, Ruiru', county: 'Kiambu', connectors: ['AC Type 2'], lat: -1.1591, lng: 36.9571 },
+                { name: 'BasiGo Station, Kikuyu', county: 'Kiambu', connectors: ['DC CCS2'], lat: -1.2523, lng: 36.6672 },
+                { name: 'BasiGo Station, Thika', county: 'Kiambu', connectors: ['DC CCS2'], lat: -1.0332, lng: 37.0693 },
+                { name: 'Trinity Energy Service Station, Banana', county: 'Kiambu', connectors: ['AC Type 2'], lat: -1.1876, lng: 36.9127 },
+                { name: 'Unique Auto, Ruiru', county: 'Kiambu', connectors: ['GBT 60kw'], lat: -1.1448, lng: 36.9608 },
+                { name: 'Mkeka wa mbao, Gitaru', county: 'Kiambu', connectors: ['Type 2'], lat: -1.2156, lng: 36.6894 },
+                { name: 'Thindigua, Kiambu Road opp. Quickmart', county: 'Kiambu', connectors: ['Type 2', 'Type 1 AC 22kw'], lat: -1.2063, lng: 36.8531 },
+                { name: 'Nakuwell, White House', county: 'Nakuru', connectors: ['DC CCS2', 'GBT'], lat: -0.3031, lng: 36.0800 },
+                { name: 'Buffalo Mall, Naivasha', county: 'Nakuru', connectors: ['AC Type 2'], lat: -0.7129, lng: 36.4335 },
+                { name: 'Safari Mall, Naivasha', county: 'Nakuru', connectors: ['Type 2'], lat: -0.7145, lng: 36.4312 },
+                { name: 'Westside Mall, Nakuru', county: 'Nakuru', connectors: ['AC Type 2'], lat: -0.3031, lng: 36.0662 },
+                { name: 'Hillcourt Resort, Nakuru', county: 'Nakuru', connectors: ['AC 22kw Type 2', 'GB/T'], lat: -0.2827, lng: 36.0661 },
+                { name: 'Crescent Lodge, Naivasha', county: 'Nakuru', connectors: ['7kw Type 2'], lat: -0.7174, lng: 36.4287 },
+                { name: 'Kwa Amos, Kinamba', county: 'Nakuru', connectors: ['7kw Type 2'], lat: -0.3847, lng: 36.0982 },
+                { name: 'Kwa Amos, Karai', county: 'Nakuru', connectors: ['Type 2'], lat: -0.4213, lng: 36.1147 },
+                { name: 'Kwa Amos, Mirera', county: 'Nakuru', connectors: ['Type 2'], lat: -0.3562, lng: 36.0713 },
+                { name: 'Mega City Mall, Kisumu', county: 'Kisumu', connectors: ['AC Type 2'], lat: -0.0917, lng: 34.7680 },
+                { name: 'City Mall Nyali', county: 'Mombasa', connectors: ['AC Type 2'], lat: -4.0435, lng: 39.7223 },
+                { name: 'Sportman Arms, Baraburitto, Nanyuki', county: 'Laikipia', connectors: ['Type 2'], lat: -0.0173, lng: 37.0736 },
+                { name: 'K Energy Petrol Station, Nyahururu', county: 'Laikipia', connectors: ['Type 2'], lat: -0.0381, lng: 36.3636 },
+                { name: 'Gmax Motors, Nanyuki', county: 'Laikipia', connectors: ['Type 2'], lat: -0.0167, lng: 37.0742 },
+                { name: '4NTE Stage, Nyahururu', county: 'Laikipia', connectors: ['CCS2'], lat: -0.0402, lng: 36.3598 },
+                { name: 'Green Park / Acacia Mall, Athi River', county: 'Machakos', connectors: ['Type 2'], lat: -1.4521, lng: 36.9782 },
+                { name: 'Petrocity, Mavoko', county: 'Machakos', connectors: ['AC Type 2', 'DC CCS2'], lat: -1.3878, lng: 36.9453 },
+                { name: 'Petrocam opp. KMTC, Machakos', county: 'Machakos', connectors: ['GBT'], lat: -1.5227, lng: 37.2634 },
+                { name: 'Bellways Business Park, Syokimau', county: 'Machakos', connectors: ['Type 2'], lat: -1.3213, lng: 36.8972 },
+                { name: 'Dallas Lounge, Narok Town', county: 'Narok', connectors: ['22kw Type 2', 'GBT'], lat: -1.0822, lng: 35.8710 },
+                { name: 'Kisii Town', county: 'Kisii', connectors: ['7kw Type 2'], lat: -0.6817, lng: 34.7680 },
+                { name: 'Ogembo', county: 'Kisii', connectors: ['7kw Type 2'], lat: -0.7992, lng: 34.7253 }
+            ];
+
+            // Initialize map
+            const map = L.map('chargingMap').setView([-1.286389, 36.817223], 7);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            const markers = {};
+            let activeMarker = null;
+            let routingControl = null;
+
+            // Populate counties
+            const counties = [...new Set(stations.map(s => s.county))].sort();
+            const countyFilter = document.getElementById('countyFilter');
+            counties.forEach(county => {
+                const option = document.createElement('option');
+                option.value = county;
+                option.textContent = county;
+                countyFilter.appendChild(option);
+            });
+
+            // Create custom icon
+            function createCustomIcon() {
+                return L.divIcon({
+                    className: '',
+                    html: '<div style="width: 32px; height: 32px; background: linear-gradient(135deg, #10b981, #06b6d4); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 3px solid white; box-shadow: 0 3px 10px rgba(0,0,0,0.3); position: relative;"><span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(45deg); font-size: 16px;">⚡</span></div>',
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32],
+                    popupAnchor: [0, -32]
+                });
+            }
+
+            // Add markers
+            stations.forEach((station, index) => {
+                const marker = L.marker([station.lat, station.lng], {
+                    icon: createCustomIcon()
+                }).addTo(map);
+
+                const popupContent = `
+                    <div style="min-width: 220px;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--foreground);">${station.name}</h4>
+                        <p style="margin: 0 0 0.5rem 0; color: var(--muted-foreground); font-size: 0.9rem;">${station.county} County</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.75rem;">
+                            ${station.connectors.map(c => `<span style="background: #eef2ff; color: var(--foreground); padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem;">${c}</span>`).join('')}
+                        </div>
+                        <button onclick="getDirections(${index})" style="width: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); color: white; padding: 0.65rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; font-size: 0.9rem;">
+                            📍 Get Directions
+                        </button>
+                    </div>
+                `;
+
+                marker.bindPopup(popupContent, { maxWidth: 300 });
+                markers[index] = marker;
+
+                marker.on('click', () => {
+                    if (activeMarker !== null) {
+                        document.querySelectorAll('.location-card')[activeMarker]?.classList.remove('active');
+                    }
+                    activeMarker = index;
+                    document.querySelectorAll('.location-card')[index]?.classList.add('active');
+                    document.querySelectorAll('.location-card')[index]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+            });
+
+            // Render location list
+            function renderList(filteredStations = stations) {
+                const list = document.getElementById('locationList');
+                list.innerHTML = '';
+
+                filteredStations.forEach((station, originalIndex) => {
+                    const index = stations.indexOf(station);
+                    const card = document.createElement('div');
+                    card.className = 'location-card';
+                    card.innerHTML = `
+                        <div style="display: flex; gap: 0.75rem; align-items: start;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <span style="font-size: 1.25rem;">⚡</span>
+                            </div>
+                            <div style="flex: 1; min-width: 0;">
+                                <h4 style="margin: 0 0 0.25rem 0; font-size: 0.95rem; font-weight: 600; color: var(--foreground);">${station.name}</h4>
+                                <p style="margin: 0 0 0.5rem 0; color: var(--muted-foreground); font-size: 0.85rem;">${station.county} County</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                                    ${station.connectors.map(c => `<span class="connector-badge">${c}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    card.onclick = () => {
+                        map.setView([station.lat, station.lng], 14, { animate: true });
+                        markers[index].openPopup();
+                        if (activeMarker !== null) {
+                            document.querySelectorAll('.location-card')[activeMarker]?.classList.remove('active');
+                        }
+                        activeMarker = index;
+                        card.classList.add('active');
+                    };
+
+                    list.appendChild(card);
+                });
+
+                document.getElementById('locationCount').textContent = `${filteredStations.length} stations`;
+            }
+
+            renderList();
+
+            // Search and filter
+            function filterStations() {
+                const searchTerm = document.getElementById('mapSearch').value.toLowerCase();
+                const selectedCounty = document.getElementById('countyFilter').value;
+
+                const filtered = stations.filter(station => {
+                    const matchesSearch = !searchTerm ||
+                        station.name.toLowerCase().includes(searchTerm) ||
+                        station.county.toLowerCase().includes(searchTerm) ||
+                        station.connectors.some(c => c.toLowerCase().includes(searchTerm));
+                    const matchesCounty = !selectedCounty || station.county === selectedCounty;
+                    return matchesSearch && matchesCounty;
+                });
+
+                renderList(filtered);
+
+                // Update marker visibility
+                stations.forEach((station, index) => {
+                    if (filtered.includes(station)) {
+                        markers[index].addTo(map);
+                    } else {
+                        map.removeLayer(markers[index]);
+                    }
+                });
+            }
+
+            document.getElementById('mapSearch').addEventListener('input', filterStations);
+            document.getElementById('countyFilter').addEventListener('change', filterStations);
+            document.getElementById('resetFilters').addEventListener('click', () => {
+                document.getElementById('mapSearch').value = '';
+                document.getElementById('countyFilter').value = '';
+                filterStations();
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                    routingControl = null;
+                }
+            });
+
+            // Get directions function
+            window.getDirections = function(index) {
+                const station = stations[index];
+
+                if (!navigator.geolocation) {
+                    alert('Geolocation is not supported by your browser');
+                    return;
+                }
+
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                }
+
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+
+                    routingControl = L.Routing.control({
+                        waypoints: [
+                            L.latLng(userLat, userLng),
+                            L.latLng(station.lat, station.lng)
+                        ],
+                        router: L.Routing.osrmv1({
+                            serviceUrl: 'https://router.project-osrm.org/route/v1'
+                        }),
+                        lineOptions: {
+                            styles: [{ color: '#06b6d4', opacity: 0.8, weight: 5 }]
+                        },
+                        showAlternatives: false,
+                        addWaypoints: false,
+                        draggableWaypoints: false,
+                        fitSelectedRoutes: true,
+                        show: true
+                    }).addTo(map);
+
+                }, (error) => {
+                    alert('Unable to retrieve your location: ' + error.message);
+                });
+            };
+
+            // My location button
+            document.getElementById('myLocationBtn').addEventListener('click', () => {
+                if (!navigator.geolocation) {
+                    alert('Geolocation is not supported by your browser');
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    map.setView([lat, lng], 13);
+                    
+                    L.circle([lat, lng], {
+                        radius: 100,
+                        color: '#06b6d4',
+                        fillColor: '#06b6d4',
+                        fillOpacity: 0.2
+                    }).addTo(map);
+                }, (error) => {
+                    alert('Unable to retrieve your location: ' + error.message);
+                });
+            });
+
+            // Fit bounds to show all markers
+            const bounds = L.latLngBounds(stations.map(s => [s.lat, s.lng]));
+            map.fitBounds(bounds, { padding: [50, 50] });
+        }
+    </script>
+</body>
+</html>

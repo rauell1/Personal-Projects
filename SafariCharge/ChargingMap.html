@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SafariCharge — Interactive Charging Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    body { background: #fafbfc; color: #1a1f2e; }
+    
+    .container { display: flex; height: 100vh; gap: 18px; padding: 18px; }
+    
+    /* Sidebar */
+    .sidebar { 
+      width: 360px; 
+      min-width: 260px; 
+      max-width: 420px; 
+      background: #fff; 
+      border-radius: 12px; 
+      box-shadow: 0 8px 30px rgba(2,6,23,0.06); 
+      padding: 16px; 
+      display: flex; 
+      flex-direction: column;
+    }
+    
+    .search { 
+      width: 100%; 
+      padding: 10px 12px; 
+      border-radius: 10px; 
+      border: 1px solid #e6edf3; 
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    
+    .search:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+    }
+    
+    .controls { 
+      display: flex; 
+      gap: 8px; 
+      margin-bottom: 10px;
+    }
+    
+    .btn { 
+      padding: 8px 10px; 
+      border-radius: 8px; 
+      border: 1px solid #e6edf3; 
+      background: #fff; 
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .btn:hover {
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+      color: white;
+      border-color: transparent;
+    }
+    
+    .list { 
+      overflow: auto; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 10px;
+      flex: 1;
+    }
+    
+    .list::-webkit-scrollbar { width: 6px; }
+    .list::-webkit-scrollbar-track { background: #f5f5f5; border-radius: 10px; }
+    .list::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+    
+    .card { 
+      padding: 10px; 
+      border-radius: 10px; 
+      border: 1px solid #eef3f8; 
+      background: linear-gradient(180deg, #fff, #fbfdff); 
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .card:hover {
+      border-color: #10b981;
+      box-shadow: 0 4px 12px rgba(16,185,129,0.15);
+      transform: translateY(-2px);
+    }
+    
+    .card.active { 
+      border-color: #10b981; 
+      box-shadow: 0 8px 20px rgba(16,185,129,0.08);
+      background: linear-gradient(135deg, rgba(16,185,129,0.05), rgba(6,182,212,0.05));
+    }
+    
+    .card-header {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    
+    .card-info { flex: 1; min-width: 0; }
+    
+    .card-name {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    
+    .card-county {
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+    
+    .connector { 
+      display: inline-block; 
+      background: #eef2ff; 
+      padding: 4px 8px; 
+      border-radius: 999px; 
+      margin-right: 6px; 
+      font-size: 12px;
+      margin-top: 6px;
+    }
+    
+    .card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    
+    .card-actions .btn {
+      flex: 1;
+      padding: 6px 8px;
+      font-size: 12px;
+    }
+    
+    /* Expandable Details */
+    .card-details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    
+    .card-details.expanded {
+      max-height: 1000px;
+      transition: max-height 0.5s ease-in;
+    }
+    
+    .detail-section {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #eef3f8;
+    }
+    
+    .detail-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    
+    .station-image {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    
+    .detail-label {
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .detail-value {
+      color: #6b7280;
+    }
+    
+    .vehicle-item {
+      background: rgba(16,185,129,0.05);
+      border: 1px solid rgba(16,185,129,0.15);
+      border-radius: 6px;
+      padding: 6px 8px;
+      margin-bottom: 6px;
+      font-size: 11px;
+    }
+    
+    .vehicle-name {
+      font-weight: 700;
+      color: #1a1f2e;
+      margin-bottom: 2px;
+    }
+    
+    .vehicle-specs {
+      color: #6b7280;
+      font-size: 10px;
+      line-height: 1.3;
+    }
+    
+    /* Map Container */
+    .map-wrap { 
+      flex: 1; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      box-shadow: 0 8px 30px rgba(2,6,23,0.06); 
+      position: relative;
+    }
+    
+    #map { width: 100%; height: 100%; }
+    
+    /* FAB Button */
+    .fab { 
+      position: absolute; 
+      right: 16px; 
+      bottom: 16px; 
+      z-index: 999; 
+      background: linear-gradient(90deg, #10b981, #06b6d4); 
+      color: #fff; 
+      padding: 10px 12px; 
+      border-radius: 999px; 
+      border: none; 
+      cursor: pointer; 
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+      transition: all 0.2s;
+    }
+    
+    .fab:hover {
+      box-shadow: 0 6px 16px rgba(16,185,129,0.4);
+      transform: translateY(-2px);
+    }
+    
+    /* Responsive */
+    @media(max-width:900px) { 
+      .container { flex-direction: column; padding: 10px; gap: 10px; } 
+      .sidebar { width: 100%; height: 42vh; } 
+      .map-wrap { height: calc(100vh - 42vh - 20px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h3 style="margin:0 0 8px 0">Charging Stations</h3>
+      <input id="search" class="search" placeholder="Search by name, county or connector" />
+      <div class="controls">
+        <select id="countyFilter" style="flex:1;padding:8px;border-radius:8px;border:1px solid #e6edf3">
+          <option value="">All counties</option>
+        </select>
+        <button id="reset" class="btn">Reset</button>
+      </div>
+      <div id="list" class="list"></div>
+    </aside>
+
+    <div class="map-wrap">
+      <div id="map"></div>
+      <button id="locFab" class="fab">📍 My location</button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+  <script>
+    // Kenya EV Market Vehicle Database
+    const kenyaEVs = {
+      'Tesla Model 3': { charging: 'Type 2 AC, CCS2 DC', battery: '60-82 kWh', range: '430-629 km', power: '208-377 kW' },
+      'Tesla Model Y': { charging: 'Type 2 AC, CCS2 DC', battery: '60-82 kWh', range: '430-533 km', power: '208-377 kW' },
+      'Tesla Model S': { charging: 'Type 2 AC, CCS2 DC', battery: '100 kWh', range: '634-652 km', power: '493-750 kW' },
+      'Tesla Model X': { charging: 'Type 2 AC, CCS2 DC', battery: '100 kWh', range: '528-560 km', power: '493-750 kW' },
+      'BYD Atto 3': { charging: 'Type 2 AC, CCS2/GBT DC', battery: '49.92-60.48 kWh', range: '345-480 km', power: '150-160 kW' },
+      'BYD Seal': { charging: 'Type 2 AC, CCS2/GBT DC', battery: '61.4-82.5 kWh', range: '460-570 km', power: '170-390 kW' },
+      'BYD Dolphin': { charging: 'Type 2 AC, CCS2/GBT DC', battery: '44.9-60.48 kWh', range: '340-427 km', power: '70-130 kW' },
+      'BYD Tang': { charging: 'Type 2 AC, GBT DC', battery: '86.4 kWh', range: '505-565 km', power: '380-440 kW' },
+      'Nissan Leaf': { charging: 'Type 1 AC, CHAdeMO DC', battery: '40-62 kWh', range: '270-385 km', power: '110-160 kW' },
+      'Nissan Ariya': { charging: 'Type 2 AC, CHAdeMO/CCS2 DC', battery: '63-87 kWh', range: '385-500 km', power: '160-290 kW' },
+      'MG ZS EV': { charging: 'Type 2 AC, CCS2/GBT DC', battery: '50.3-72.6 kWh', range: '320-440 km', power: '115-130 kW' },
+      'MG4 Electric': { charging: 'Type 2 AC, CCS2 DC', battery: '51-64 kWh', range: '350-450 km', power: '125-150 kW' },
+      'Hyundai Kona Electric': { charging: 'Type 2 AC, CCS2 DC', battery: '39.2-64 kWh', range: '305-484 km', power: '100-150 kW' },
+      'Hyundai Ioniq 5': { charging: 'Type 2 AC, CCS2 DC', battery: '58-77.4 kWh', range: '384-481 km', power: '125-225 kW' },
+      'Hyundai Ioniq 6': { charging: 'Type 2 AC, CCS2 DC', battery: '53-77.4 kWh', range: '361-614 km', power: '111-239 kW' },
+      'Kia EV6': { charging: 'Type 2 AC, CCS2 DC', battery: '58-77.4 kWh', range: '394-528 km', power: '125-430 kW' },
+      'Kia Niro EV': { charging: 'Type 2 AC, CCS2 DC', battery: '39.2-64.8 kWh', range: '289-460 km', power: '100-150 kW' },
+      'Kia Soul EV': { charging: 'Type 1 AC, CHAdeMO/CCS DC', battery: '64 kWh', range: '386 km', power: '150 kW' },
+      'VW ID.3': { charging: 'Type 2 AC, CCS2 DC', battery: '45-77 kWh', range: '340-550 km', power: '107-150 kW' },
+      'VW ID.4': { charging: 'Type 2 AC, CCS2 DC', battery: '52-77 kWh', range: '341-520 km', power: '125-220 kW' },
+      'VW e-Golf': { charging: 'Type 2 AC, CCS2 DC', battery: '35.8 kWh', range: '231 km', power: '100 kW' },
+      'BMW i3': { charging: 'Type 2 AC, CCS2 DC', battery: '42.2 kWh', range: '260-310 km', power: '125 kW' },
+      'BMW iX': { charging: 'Type 2 AC, CCS2 DC', battery: '71-111.5 kWh', range: '372-630 km', power: '240-455 kW' },
+      'BMW i4': { charging: 'Type 2 AC, CCS2 DC', battery: '70.2-83.9 kWh', range: '483-590 km', power: '250-400 kW' },
+      'Audi e-tron': { charging: 'Type 2 AC, CCS2 DC', battery: '71-95 kWh', range: '330-441 km', power: '230-300 kW' },
+      'Audi e-tron GT': { charging: 'Type 2 AC, CCS2 DC', battery: '93.4 kWh', range: '472-488 km', power: '350-440 kW' },
+      'Audi Q4 e-tron': { charging: 'Type 2 AC, CCS2 DC', battery: '52-77 kWh', range: '316-520 km', power: '125-220 kW' },
+      'Mercedes EQC': { charging: 'Type 2 AC, CCS2 DC', battery: '80 kWh', range: '414-434 km', power: '300 kW' },
+      'Mercedes EQS': { charging: 'Type 2 AC, CCS2 DC', battery: '90-107.8 kWh', range: '478-784 km', power: '245-460 kW' },
+      'Porsche Taycan': { charging: 'Type 2 AC, CCS2 DC', battery: '71-93.4 kWh', range: '364-508 km', power: '280-560 kW' },
+      'Jaguar I-PACE': { charging: 'Type 2 AC, CCS2 DC', battery: '90 kWh', range: '470 km', power: '294 kW' },
+      'Polestar 2': { charging: 'Type 2 AC, CCS2 DC', battery: '64-78 kWh', range: '406-551 km', power: '170-350 kW' },
+      'Renault Zoe': { charging: 'Type 2 AC, CCS2 DC', battery: '52 kWh', range: '386 km', power: '100 kW' },
+      'Chevy Bolt': { charging: 'Type 1 AC, CCS1 DC', battery: '65 kWh', range: '417 km', power: '150 kW' },
+      'Mitsubishi Outlander PHEV': { charging: 'Type 1 AC, CHAdeMO DC', battery: '20 kWh', range: '87 km EV', power: '165 kW' }
+    };
+
+    // Stations with images and complete data
+    const stations = [
+      { name: 'Waterfront, Karen', county: 'Nairobi', connectors: ['AC Type 1','Type 2'], lat: -1.3326, lng: 36.6965, speed: 'Medium', power: '7-22 kW', description: 'Premium shopping center with multiple charging points', image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=400', compatibleVehicles: ['Tesla Model 3', 'Tesla Model Y', 'Nissan Leaf', 'BMW i3', 'Chevy Bolt', 'VW ID.4', 'Renault Zoe'] },
+      { name: 'The Well, Karen', county: 'Nairobi', connectors: ['AC Type 1','Type 2','DC CHAdeMO','DC CCS2'], lat: -1.3254, lng: 36.7086, speed: 'Fast', power: '50-150 kW', description: 'Modern shopping complex with fast DC charging', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', compatibleVehicles: ['Tesla Model S', 'Tesla Model 3', 'Tesla Model X', 'Tesla Model Y', 'Nissan Leaf', 'Hyundai Kona Electric', 'Audi e-tron', 'Porsche Taycan'] },
+      { name: "Karen C, Lang'ata Road", county: 'Nairobi', connectors: ['AC'], lat: -1.3235, lng: 36.7197, speed: 'Slow', power: '3.6-7 kW', description: 'Basic AC charging for overnight stays', image: 'https://images.unsplash.com/photo-1511127088257-53ccfcc769fa?w=400', compatibleVehicles: ['All EVs with Type 1/2 adapters'] },
+      { name: 'Karen 31 off Ngong Rd', county: 'Nairobi', connectors: ['AC Type 2','CCS2','GBT'], lat: -1.3199, lng: 36.7318, speed: 'Fast', power: '50-120 kW', description: 'Multi-standard charging hub', image: 'https://images.unsplash.com/photo-1617650728468-8581d86b5e24?w=400', compatibleVehicles: ['Tesla Model 3', 'Tesla Model Y', 'BYD Atto 3', 'MG ZS EV', 'Hyundai Ioniq 5'] },
+      { name: 'Adlife, Kilimani', county: 'Nairobi', connectors: ['AC'], lat: -1.2921, lng: 36.7820, speed: 'Medium', power: '7-11 kW', description: 'Urban charging point in business district', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400', compatibleVehicles: ['Nissan Leaf', 'Renault Zoe', 'BMW i3'] },
+      { name: 'Sarit Centre, Westlands', county: 'Nairobi', connectors: ['AC','DC CHAdeMO'], lat: -1.2625, lng: 36.8017, speed: 'Fast', power: '50 kW', description: 'Major shopping mall with CHAdeMO fast charging', image: 'https://images.unsplash.com/photo-1555636222-cae831e670b3?w=400', compatibleVehicles: ['Nissan Leaf', 'Mitsubishi Outlander PHEV', 'Kia Soul EV'] },
+      { name: 'UNGA House, Westlands', county: 'Nairobi', connectors: ['Type 2'], lat: -1.2642, lng: 36.8063, speed: 'Medium', power: '22 kW', description: 'Corporate building charging facility', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400', compatibleVehicles: ['Tesla Model 3', 'Renault Zoe', 'VW e-Golf'] },
+      { name: 'ABC Place, Westlands', county: 'Nairobi', connectors: ['AC','DC'], lat: -1.2637, lng: 36.8091, speed: 'Fast', power: '50-100 kW', description: 'Premium mall with multiple charging standards', image: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400', compatibleVehicles: ['Tesla Model S', 'Audi e-tron', 'Jaguar I-PACE', 'Mercedes EQC'] },
+      { name: 'Standard Chartered, Chiromo', county: 'Nairobi', connectors: ['AC Type 2'], lat: -1.2710, lng: 36.8087, speed: 'Medium', power: '22 kW', description: 'Banking headquarters with employee charging', image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400', compatibleVehicles: ['BMW i3', 'VW ID.3', 'Nissan Leaf'] },
+      { name: 'Mövenpick, Westlands', county: 'Nairobi', connectors: ['AC Type 2'], lat: -1.2651, lng: 36.8077, speed: 'Medium', power: '11-22 kW', description: 'Luxury hotel with guest charging', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400', compatibleVehicles: ['All Type 2 compatible EVs'] },
+      { name: 'Village Market, Gigiri', county: 'Nairobi', connectors: ['AC'], lat: -1.2382, lng: 36.8041, speed: 'Medium', power: '7-11 kW', description: 'Popular shopping destination with AC charging', image: 'https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=400', compatibleVehicles: ['Nissan Leaf', 'BMW i3', 'Renault Zoe'] },
+      { name: 'Two Rivers Mall, Runda', county: 'Nairobi', connectors: ['AC Type 2'], lat: -1.2242, lng: 36.8536, speed: 'Medium', power: '22 kW', description: 'Large mall complex with Type 2 charging', image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400', compatibleVehicles: ['Tesla Model 3', 'Tesla Model Y', 'VW ID.4', 'Hyundai Kona Electric'] },
+      { name: 'KCB Towers, Upper Hill', county: 'Nairobi', connectors: ['Type 2 AC'], lat: -1.2891, lng: 36.8213, speed: 'Medium', power: '22 kW', description: 'Banking headquarters charging station', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400', compatibleVehicles: ['All Type 2 EVs'] },
+      { name: 'NCBA HQ, Ragati Road, Upper Hill', county: 'Nairobi', connectors: ['Type 2 AC'], lat: -1.2897, lng: 36.8190, speed: 'Medium', power: '22 kW', description: 'Corporate charging facility', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400', compatibleVehicles: ['Tesla Model 3', 'VW ID.4', 'Audi e-tron'] },
+      { name: 'NCBA Masaba, Upper Hill', county: 'Nairobi', connectors: ['Type 2 AC'], lat: -1.2903, lng: 36.8179, speed: 'Medium', power: '22 kW', description: 'Banking branch with EV charging', image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400', compatibleVehicles: ['All Type 2 compatible vehicles'] },
+      { name: 'Britam Towers, Upper Hill', county: 'Nairobi', connectors: ['AC Type 2'], lat: -1.2876, lng: 36.8203, speed: 'Medium', power: '22 kW', description: 'Insurance headquarters charging point', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400', compatibleVehicles: ['BMW i3', 'BMW i4', 'Mercedes EQC', 'Audi e-tron'] },
+      { name: 'CPF House, CBD', county: 'Nairobi', connectors: ['DC'], lat: -1.2834, lng: 36.8217, speed: 'Fast', power: '50-100 kW', description: 'Central business district fast charging', image: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=400', compatibleVehicles: ['Tesla Model S', 'Porsche Taycan', 'Audi e-tron GT'] },
+      { name: 'JKIA', county: 'Nairobi', connectors: ['Type 1','Type 2 AC','DC CHAdeMO'], lat: -1.3192, lng: 36.9275, speed: 'Fast', power: '50 kW', description: 'International airport charging hub', image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400', compatibleVehicles: ['Nissan Leaf', 'Tesla Models (adapter)', 'Hyundai Kona Electric'] },
+      { name: 'Basigo Depot, Embakasi', county: 'Nairobi', connectors: ['CCS2','GBT'], lat: -1.3158, lng: 36.8939, speed: 'Fast', power: '60-120 kW', description: 'Bus depot with high-power charging', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=400', compatibleVehicles: ['BYD Atto 3', 'Tesla Models', 'Hyundai Ioniq 5'] },
+      { name: 'Roam Hub, Kayole', county: 'Nairobi', connectors: ['DC CCS2'], lat: -1.2729, lng: 36.9132, speed: 'Ultra Fast', power: '150-350 kW', description: 'Ultra-fast charging hub for long distance', image: 'https://images.unsplash.com/photo-1593941707874-ef25b8b4a92b?w=400', compatibleVehicles: ['Tesla Model 3', 'Tesla Model Y', 'Porsche Taycan', 'Hyundai Ioniq 5', 'Kia EV6'] },
+      { name: 'Roam Park, ICD Road', county: 'Nairobi', connectors: ['DC CCS2'], lat: -1.3041, lng: 36.8913, speed: 'Ultra Fast', power: '150-350 kW', description: 'High-power charging station', image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=400', compatibleVehicles: ['All CCS2 compatible EVs'] },
+      { name: 'Total, Hurlingham', county: 'Nairobi', connectors: ['DC CCS2','AC Type 2'], lat: -1.2913, lng: 36.7797, speed: 'Fast', power: '50-120 kW', description: 'Petrol station with EV charging', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', compatibleVehicles: ['Tesla Models', 'VW ID series', 'BMW i4'] },
+      { name: 'Stima Plaza, Parklands', county: 'Nairobi', connectors: ['DC CCS2','AC Type 2'], lat: -1.2647, lng: 36.8241, speed: 'Fast', power: '50-120 kW', description: 'Energy company charging facility', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400', compatibleVehicles: ['All modern EVs'] },
+      { name: 'Atlas Auto Service Centre, Thika Road', county: 'Nairobi', connectors: ['AC Type 2','DC GBT'], lat: -1.2298, lng: 36.8871, speed: 'Fast', power: '60 kW', description: 'Auto service with Chinese standard charging', image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400', compatibleVehicles: ['BYD Atto 3', 'MG ZS EV', 'Tesla Models (adapter)'] },
+      { name: 'Kamakis, Next to Kamakis Corner Square, Ruiru', county: 'Kiambu', connectors: ['AC Type 2'], lat: -1.1591, lng: 36.9571, speed: 'Medium', power: '22 kW', description: 'Suburban shopping area charging', image: 'https://images.unsplash.com/photo-1567958451986-2de427a4a0be?w=400', compatibleVehicles: ['All Type 2 EVs'] },
+      { name: 'BasiGo Station, Kikuyu', county: 'Kiambu', connectors: ['DC CCS2'], lat: -1.2523, lng: 36.6672, speed: 'Fast', power: '60-120 kW', description: 'Bus charging station open to public', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=400', compatibleVehicles: ['Tesla Models', 'Hyundai Ioniq 5', 'Kia EV6'] },
+      { name: 'BasiGo Station, Thika', county: 'Kiambu', connectors: ['DC CCS2'], lat: -1.0332, lng: 37.0693, speed: 'Fast', power: '60-120 kW', description: 'Highway charging station', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', compatibleVehicles: ['All CCS2 EVs'] },
+      { name: 'Trinity Energy Service Station, Banana', county: 'Kiambu', connectors: ['AC Type 2'], lat: -1.1876, lng: 36.9127, speed: 'Medium', power: '22 kW', description: 'Highway service station', image: 'https://images.unsplash.com/photo-1617650728468-8581d86b5e24?w=400', compatibleVehicles: ['Tesla Model 3', 'VW ID.4', 'Nissan Ariya'] },
+      { name: 'Unique Auto, Ruiru', county: 'Kiambu', connectors: ['GBT 60kw'], lat: -1.1448, lng: 36.9608, speed: 'Fast', power: '60 kW', description: 'Chinese standard fast charging', image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400', compatibleVehicles: ['BYD Tang', 'MG ZS EV', 'BYD Atto 3'] },
+      { name: 'Mkeka wa mbao, Gitaru', county: 'Kiambu', connectors: ['Type 2'], lat: -1.2156, lng: 36.6894, speed: 'Medium', power: '11-22 kW', description: 'Community charging point', image: 'https://images.unsplash.com/photo-1511127088257-53ccfcc769fa?w=400', compatibleVehicles: ['All Type 2 vehicles'] },
+      { name: 'Thindigua, Kiambu Road opp. Quickmart', county: 'Kiambu', connectors: ['Type 2','Type 1 AC 22kw'], lat: -1.2063, lng: 36.8531, speed: 'Medium', power: '22 kW', description: 'Shopping area with dual standard charging', image: 'https://images.unsplash.com/photo-1567958451986-2de427a4a0be?w=400', compatibleVehicles: ['Tesla Models', 'Nissan Leaf', 'Chevy Bolt'] },
+      { name: 'Nakuwell, White House', county: 'Nakuru', connectors: ['DC CCS2','GBT'], lat: -0.3031, lng: 36.0800, speed: 'Fast', power: '60-120 kW', description: 'Highway fast charging station', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', compatibleVehicles: ['Tesla Models', 'BYD models', 'VW ID.4'] },
+      { name: 'Buffalo Mall, Naivasha', county: 'Nakuru', connectors: ['AC Type 2'], lat: -0.7129, lng: 36.4335, speed: 'Medium', power: '22 kW', description: 'Shopping mall charging point', image: 'https://images.unsplash.com/photo-1555636222-cae831e670b3?w=400', compatibleVehicles: ['All Type 2 EVs'] },
+      { name: 'Safari Mall, Naivasha', county: 'Nakuru', connectors: ['Type 2'], lat: -0.7145, lng: 36.4312, speed: 'Medium', power: '22 kW', description: 'Tourist area charging station', image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400', compatibleVehicles: ['Tesla Model 3', 'Tesla Model Y', 'Hyundai Kona Electric', 'Kia Niro EV'] },
+      { name: 'Westside Mall, Nakuru', county: 'Nakuru', connectors: ['AC Type 2'], lat: -0.3031, lng: 36.0662, speed: 'Medium', power: '22 kW', description: 'Major shopping center charging', image: 'https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=400', compatibleVehicles: ['All Type 2 compatible vehicles'] },
+      { name: 'Hillcourt Resort, Nakuru', county: 'Nakuru', connectors: ['AC 22kw Type 2','GB/T'], lat: -0.2827, lng: 36.0661, speed: 'Medium', power: '22 kW', description: 'Resort hotel with guest charging', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400', compatibleVehicles: ['BYD models', 'Tesla Models', 'European EVs'] },
+      { name: 'Crescent Lodge, Naivasha', county: 'Nakuru', connectors: ['7kw Type 2'], lat: -0.7174, lng: 36.4287, speed: 'Slow', power: '7 kW', description: 'Lodge with overnight charging', image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400', compatibleVehicles: ['All Type 2 EVs'] },
+      { name: 'Kwa Amos, Kinamba', county: 'Nakuru', connectors: ['7kw Type 2'], lat: -0.3847, lng: 36.0982, speed: 'Slow', power: '7 kW', description: 'Roadside charging point', image: 'https://images.unsplash.com/photo-1511127088257-53ccfcc769fa?w=400', compatibleVehicles: ['All Type 2 vehicles'] },
+      { name: 'Kwa Amos, Karai', county: 'Nakuru', connectors: ['Type 2'], lat: -0.4213, lng: 36.1147, speed: 'Medium', power: '11-22 kW', description: 'Highway rest stop charging', image: 'https://images.unsplash.com/photo-1617650728468-8581d86b5e24?w=400', compatibleVehicles: ['All Type 2 EVs'] },
+      { name: 'Kwa Amos, Mirera', county: 'Nakuru', connectors: ['Type 2'], lat: -0.3562, lng: 36.0713, speed: 'Medium', power: '11-22 kW', description: 'Rest area with EV charging', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', compatibleVehicles: ['Tesla Models', 'VW ID series'] },
+      { name: 'Mega City Mall, Kisumu', county: 'Kisumu', connectors: ['AC Type 2'], lat: -0.0917, lng: 34.7680, speed: 'Medium', power: '22 kW', description: 'Western Kenya charging hub', image: 'https://images.unsplash.com/photo-1555636222-cae831e670b3?w=400', compatibleVehicles: ['All Type 2 compatible EVs'] },
+      { name: 'City Mall Nyali', county: 'Mombasa', connectors: ['AC Type 2'], lat: -4.0435, lng: 39.7223, speed: 'Medium', power: '22 kW', description: 'Coastal charging station', image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400', compatibleVehicles: ['Tesla Models', 'BMW i series', 'Audi e-tron'] },
+      { name: 'Sportman Arms, Baraburitto, Nanyuki', county: 'Laikipia', connectors: ['Type 2'], lat: -0.0173, lng: 37.0736, speed: 'Medium', power: '22 kW', description: 'Safari route charging point', image: 'https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=400', compatibleVehicles: ['All Type 2 EVs'] },
+      { name: 'K Energy Petrol Station, Nyahururu', county: 'Laikipia', connectors: ['Type 2'], lat: -0.0381, lng: 36.3636, speed: 'Medium', power: '22 kW', description: 'Highway service station', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', compatibleVehicles: ['Tesla Model 3', 'Tesla Model Y', 'VW ID.4'] },
+      { name: 'Gmax Motors, Nanyuki', county: 'Laikipia', connectors: ['Type 2'], lat: -0.0167, lng: 37.0742, speed: 'Medium', power: '22 kW', description: 'Dealership with charging', image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400', compatibleVehicles: ['All Type 2 vehicles'] },
+      { name: '4NTE Stage, Nyahururu', county: 'Laikipia', connectors: ['CCS2'], lat: -0.0402, lng: 36.3598, speed: 'Fast', power: '60-120 kW', description: 'Fast charging hub', image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=400', compatibleVehicles: ['Tesla Models', 'Hyundai Ioniq 5', 'Kia EV6'] },
+      { name: 'Green Park / Acacia Mall, Athi River', county: 'Machakos', connectors: ['Type 2'], lat: -1.4521, lng: 36.9782, speed: 'Medium', power: '22 kW', description: 'Industrial area charging', image: 'https://images.unsplash.com/photo-1567958451986-2de427a4a0be?w=400', compatibleVehicles: ['All Type 2 EVs'] },
+      { name: 'Petrocity, Mavoko', county: 'Machakos', connectors: ['AC Type 2','DC CCS2'], lat: -1.3878, lng: 36.9453, speed: 'Fast', power: '50-120 kW', description: 'Multi-standard charging hub', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400', compatibleVehicles: ['Tesla Models', 'VW ID series', 'Hyundai EVs'] },
+      { name: 'Petrocam opp. KMTC, Machakos', county: 'Machakos', connectors: ['GBT'], lat: -1.5227, lng: 37.2634, speed: 'Fast', power: '60 kW', description: 'Chinese standard charging', image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400', compatibleVehicles: ['BYD models', 'MG ZS EV'] },
+      { name: 'Bellways Business Park, Syokimau', county: 'Machakos', connectors: ['Type 2'], lat: -1.3213, lng: 36.8972, speed: 'Medium', power: '22 kW', description: 'Business park charging facility', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400', compatibleVehicles: ['All Type 2 vehicles'] },
+      { name: 'Dallas Lounge, Narok Town', county: 'Narok', connectors: ['22kw Type 2','GBT'], lat: -1.0822, lng: 35.8710, speed: 'Medium', power: '22 kW', description: 'Tourist route charging point', image: 'https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=400', compatibleVehicles: ['BYD models', 'Tesla Models', 'European EVs'] },
+      { name: 'Kisii Town', county: 'Kisii', connectors: ['7kw Type 2'], lat: -0.6817, lng: 34.7680, speed: 'Slow', power: '7 kW', description: 'Western highlands charging', image: 'https://images.unsplash.com/photo-1511127088257-53ccfcc769fa?w=400', compatibleVehicles: ['All Type 2 EVs'] },
+      { name: 'Ogembo', county: 'Kisii', connectors: ['7kw Type 2'], lat: -0.7992, lng: 34.7253, speed: 'Slow', power: '7 kW', description: 'Rural charging point', image: 'https://images.unsplash.com/photo-1511127088257-53ccfcc769fa?w=400', compatibleVehicles: ['All Type 2 compatible vehicles'] }
+    ];
+
+    const map = L.map('map').setView([-1.286389, 36.817223], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors' }).addTo(map);
+
+    const markerLayer = L.layerGroup().addTo(map);
+    const markers = [];
+    let activeIndex = -1;
+    let routingControl = null;
+
+    function createIcon(){
+      return L.divIcon({ html: '<div style="width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,#10b981,#06b6d4);border:3px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.25);position:relative"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(45deg);font-size:14px">⚡</span></div>', className: '', iconSize:[28,28], iconAnchor:[14,28], popupAnchor:[0,-28] });
+    }
+
+    stations.forEach((s, i) => {
+      const m = L.marker([s.lat, s.lng], { icon: createIcon() }).addTo(markerLayer);
+      m.bindPopup(`<strong>${s.name}</strong><br/><small>${s.county}</small><br/><div style="margin-top:8px">${s.connectors.join(' • ')}</div><div style="margin-top:8px"><button onclick=window.openDirections(${i}) style="padding:.5rem 0.75rem;border-radius:.5rem;border:none;background:linear-gradient(90deg,#10b981,#06b6d4);color:#fff;cursor:pointer">Get Directions</button></div>`);
+      markers.push(m);
+      m.on('click', () => setActive(i));
+    });
+
+    function renderList(filtered){
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+      filtered.forEach((s) => {
+        const idx = stations.indexOf(s);
+        const card = document.createElement('div');
+        card.className = 'card' + (idx===activeIndex ? ' active' : '');
+        
+        const vehiclesHTML = s.compatibleVehicles.slice(0, 5).map(vName => {
+          const vData = kenyaEVs[vName] || {};
+          return `
+            <div class="vehicle-item">
+              <div class="vehicle-name">${vName}</div>
+              ${vData.battery ? `<div class="vehicle-specs">🔋 ${vData.battery} • ⚡ ${vData.power} • 📍 ${vData.range}</div>` : ''}
+            </div>
+          `;
+        }).join('');
+        
+        card.innerHTML = `
+          <div class="card-header">
+            <div class="card-icon">⚡</div>
+            <div class="card-info">
+              <div class="card-name">${s.name}</div>
+              <div class="card-county">📍 ${s.county} County</div>
+            </div>
+          </div>
+          <div>${s.connectors.map(c=>`<span class="connector">${c}</span>`).join('')}</div>
+          <div class="card-actions">
+            <button class="btn" onclick="focusStation(${idx})">View Map</button>
+            <button class="btn" onclick="openDirections(${idx})">Drive</button>
+            <button class="btn" onclick="toggleDetails(${idx})">Details</button>
+          </div>
+          <div class="card-details" id="details-${idx}">
+            <div class="detail-section">
+              <img src="${s.image}" class="station-image" onerror="this.src='https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=400'" />
+              <div class="detail-row">
+                <span class="detail-label">Speed:</span>
+                <span class="detail-value">${s.speed}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Power:</span>
+                <span class="detail-value">${s.power}</span>
+              </div>
+              <p style="font-size:12px;color:#6b7280;margin:8px 0">${s.description}</p>
+              <div class="detail-title">Compatible Vehicles</div>
+              ${vehiclesHTML}
+            </div>
+          </div>
+        `;
+        card.onclick = (e) => { if(!e.target.classList.contains('btn')) focusStation(idx); };
+        list.appendChild(card);
+      });
+    }
+
+    function toggleDetails(idx) {
+      const details = document.getElementById(`details-${idx}`);
+      details.classList.toggle('expanded');
+      event.stopPropagation();
+    }
+    window.toggleDetails = toggleDetails;
+
+    function setActive(i){
+      activeIndex = i;
+      document.querySelectorAll('.card').forEach((el, idx) => el.classList.toggle('active', idx===i));
+      markers[i].openPopup();
+      map.setView(markers[i].getLatLng(), 14, { animate:true });
+    }
+
+    function focusStation(i){ setActive(i); }
+    window.focusStation = focusStation;
+
+    function openDirections(i){
+      event.stopPropagation();
+      routeTo(i, 'user');
+    }
+    window.openDirections = openDirections;
+
+    function clearRoute(){ if(routingControl){ map.removeControl(routingControl); routingControl = null; } }
+
+    function routeTo(i, origin='user'){
+      const station = stations[i];
+      if(routingControl) clearRoute();
+      if(origin === 'user'){
+        if(!navigator.geolocation){ alert('Geolocation not supported'); return; }
+        navigator.geolocation.getCurrentPosition(pos=>{
+          const start = L.latLng(pos.coords.latitude, pos.coords.longitude);
+          const end = L.latLng(station.lat, station.lng);
+          routingControl = L.Routing.control({ waypoints: [start,end], router: L.Routing.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' }), showAlternatives:false, lineOptions:{ styles:[{color:'#06b6d4', weight:6, opacity:0.85}] }, addWaypoints:false }).addTo(map);
+        }, err=>{ alert('Unable to get your location: ' + err.message); });
+      }
+    }
+
+    function filter(){
+      const q = document.getElementById('search').value.toLowerCase();
+      const county = document.getElementById('countyFilter').value;
+      const filtered = stations.filter(s => {
+        const matchesQ = !q || s.name.toLowerCase().includes(q) || s.county.toLowerCase().includes(q) || s.connectors.join(' ').toLowerCase().includes(q);
+        const matchesCounty = !county || s.county === county;
+        return matchesQ && matchesCounty;
+      });
+      markerLayer.clearLayers();
+      filtered.forEach(s=>{ const idx = stations.indexOf(s); markers[idx].addTo(markerLayer); });
+      renderList(filtered);
+    }
+
+    document.getElementById('search').addEventListener('input', filter);
+    document.getElementById('countyFilter').addEventListener('change', filter);
+    document.getElementById('reset').addEventListener('click', ()=>{ document.getElementById('search').value=''; document.getElementById('countyFilter').value=''; filter(); clearRoute(); });
+
+    const uniq = [...new Set(stations.map(s=>s.county))].sort();
+    const sel = document.getElementById('countyFilter'); uniq.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+
+    document.getElementById('locFab').addEventListener('click', ()=>{
+      if(!navigator.geolocation){ alert('Geolocation not supported'); return; }
+      navigator.geolocation.getCurrentPosition(pos=>{ const lat=pos.coords.latitude; const lng=pos.coords.longitude; map.setView([lat,lng],13); L.circle([lat,lng],{ radius:100, color:'#06b6d4', fillColor:'#06b6d4', fillOpacity:0.12 }).addTo(map); }, err=>{ alert('Unable to get location: ' + err.message); });
+    });
+
+    filter();
+    const bounds = L.latLngBounds(stations.map(s=>[s.lat,s.lng])); map.fitBounds(bounds.pad(0.15));
+  </script>
+</body>
+</html>
