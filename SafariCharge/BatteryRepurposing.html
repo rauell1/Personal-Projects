@@ -3,13 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Battery Repurposing — Combined Field & Clean Toolkit</title>
-
-  <!-- Tailwind -->
+  <title>Battery Repurposing - Full Toolkit v2</title>
+  <!-- Tailwind CSS (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Chart.js + jsPDF -->
+  <!-- Chart.js for visualization -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- jsPDF for report export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
@@ -21,37 +20,36 @@
     @keyframes fadeSmall { from { opacity: 0; transform: translateY(6px);} to { opacity:1; transform: translateY(0);} }
     .scroll-x { overflow-x: auto; }
     pre { white-space: pre-wrap; word-break: break-word; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Helvetica Neue", monospace; }
-    /* small improvements for table */
     table td, table th { vertical-align: middle; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
   <div class="max-w-7xl mx-auto p-4 md:p-8">
     <header class="mb-6">
-      <h1 class="text-3xl font-extrabold">Battery Repurposing — Combined Toolkit</h1>
-      <p class="text-lg text-slate-600">Data-driven diagnostics: SoH, IR, HPPC, temperature & SOC compensation, classification, charts & reports.</p>
+      <h1 class="text-3xl font-extrabold">Battery Repurposing - Full Toolkit V2</h1>
+      <p class="text-lg text-slate-600">Comprehensive diagnostics, classification, history tracking, charts & reporting for second-life batteries.</p>
     </header>
 
-    <!-- Metadata / capture -->
-    <section class="bg-white p-6 rounded-2xl shadow-md mb-8 grid gap-4 lg:grid-cols-3" aria-labelledby="meta-heading">
+    <!-- Metadata / Capture Form -->
+    <section class="bg-white p-6 rounded-2xl shadow-md mb-8 grid gap-4 lg:grid-cols-3">
       <div class="lg:col-span-2">
-        <h2 id="meta-heading" class="text-xl font-semibold">Battery / Pack Metadata & Capture</h2>
-        <p class="text-sm text-slate-500 mt-1">Fill pack information — used for traceability and to seed analysis formulas.</p>
+        <h2 class="text-xl font-semibold">Battery / Pack Metadata & Capture</h2>
+        <p class="text-sm text-slate-500 mt-1">Record pack metadata - used for traceability and to seed all downstream calculations.</p>
 
-        <form id="captureForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4" onsubmit="return false;" aria-label="Record capture form">
+        <form id="captureForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4" onsubmit="return false;">
           <label class="flex flex-col">
             <span class="text-xs text-slate-600">Record ID</span>
-            <input id="recordId" type="text" class="mt-1 p-2 border rounded-lg" placeholder="e.g. VIN-1234-MODA or auto" aria-label="Record ID" />
+            <input id="recordId" type="text" class="mt-1 p-2 border rounded-lg" placeholder="Unique ID or leave blank to auto-generate" />
           </label>
 
           <label class="flex flex-col">
-            <span class="text-xs text-slate-600">Original vehicle / pack ID</span>
-            <input id="origID" type="text" class="mt-1 p-2 border rounded-lg" placeholder="OEM serial or VIN" />
+            <span class="text-xs text-slate-600">Original Vehicle / Pack ID</span>
+            <input id="origID" type="text" class="mt-1 p-2 border rounded-lg" placeholder="VIN / Serial number" />
           </label>
 
           <label class="flex flex-col">
             <span class="text-xs text-slate-600">Manufacturer / OEM</span>
-            <input id="manufacturer" type="text" class="mt-1 p-2 border rounded-lg" placeholder="Tesla / BYD / Nissan" />
+            <input id="manufacturer" type="text" class="mt-1 p-2 border rounded-lg" placeholder="e.g. Nissan, Tesla, BYD..." />
           </label>
 
           <label class="flex flex-col">
@@ -66,18 +64,18 @@
           </label>
 
           <label class="flex flex-col">
-            <span class="text-xs text-slate-600">Nominal pack capacity (kWh)</span>
-            <input id="nominalKWh" type="number" step="0.01" class="mt-1 p-2 border rounded-lg" placeholder="e.g. 60" />
+            <span class="text-xs text-slate-600">Nominal Pack Capacity (kWh)</span>
+            <input id="nominalKWh" type="number" step="0.01" class="mt-1 p-2 border rounded-lg" placeholder="e.g. 60.0" />
           </label>
 
           <label class="flex flex-col">
-            <span class="text-xs text-slate-600">Nominal pack voltage (V)</span>
-            <input id="nominalV" type="number" step="0.1" class="mt-1 p-2 border rounded-lg" />
+            <span class="text-xs text-slate-600">Nominal Pack Voltage (V)</span>
+            <input id="nominalV" type="number" step="0.1" class="mt-1 p-2 border rounded-lg" placeholder="e.g. 350" />
           </label>
 
           <label class="flex flex-col sm:col-span-2">
-            <span class="text-xs text-slate-600">Physical condition notes</span>
-            <textarea id="physicalNotes" rows="2" class="mt-1 p-2 border rounded-lg" placeholder="corrosion, swelling, damaged terminals, history notes"></textarea>
+            <span class="text-xs text-slate-600">Physical Condition / Notes</span>
+            <textarea id="physicalNotes" rows="2" class="mt-1 p-2 border rounded-lg" placeholder="e.g. swelling, corrosion, previous accident history..."></textarea>
           </label>
 
           <div class="sm:col-span-2 flex gap-2">
@@ -91,21 +89,21 @@
       </div>
 
       <div class="bg-slate-50 p-4 rounded-lg">
-        <h4 class="text-sm font-medium">Quick status</h4>
+        <h4 class="text-sm font-medium">Quick Status</h4>
         <div id="quickStatus" class="text-sm text-slate-600 mt-2">No record loaded</div>
-        <div class="mt-3 text-xs text-slate-500">Local prototype: data stored in localStorage. Replace with backend for production.</div>
+        <div class="mt-3 text-xs text-slate-500">Prototype stores data in browser localStorage. For production, connect to backend / database.</div>
       </div>
     </section>
 
     <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-      <!-- Left / Main column: Tests & Estimators -->
+      <!-- Left / Main column: Diagnostics, Estimators -->
       <div class="lg:col-span-2 space-y-6">
 
-        <!-- Capacity & SoH test -->
+        <!-- Capacity & SoH Test -->
         <article class="bg-white p-6 rounded-2xl shadow-md">
           <h2 class="text-lg font-semibold">Capacity & SoH Test</h2>
-          <p class="text-sm text-slate-500 mt-1">After a full charge (CC-CV) and controlled discharge — record measured capacity.</p>
+          <p class="text-sm text-slate-500 mt-1">After full charge (CC-CV) and controlled discharge - record measured capacity (kWh) and compare to nominal.</p>
 
           <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
             <label class="flex flex-col">
@@ -115,7 +113,7 @@
 
             <label class="flex flex-col">
               <span class="text-xs text-slate-600">Reference nominal capacity (kWh)</span>
-              <input id="refKWh" type="number" step="0.01" class="mt-1 p-2 border rounded-lg" placeholder="from metadata" />
+              <input id="refKWh" type="number" step="0.01" class="mt-1 p-2 border rounded-lg" placeholder="From metadata or manual entry" />
             </label>
 
             <div class="flex items-end">
@@ -129,15 +127,17 @@
           </div>
 
           <div class="mt-4 text-sm text-slate-700">
-            <strong>SoH formula used:</strong><br>
-            <code>SoH = (Measured Capacity) / (Nominal Capacity) × 100 %</code>
+            <strong>SoH formula:</strong><br>
+            <code>SoH = (Measured Capacity) / (Nominal Capacity) × 100 %</code><br>
+            This gives a first-order estimate of remaining energy capacity.  
+            :contentReference[oaicite:7]{index=7}
           </div>
         </article>
 
         <!-- Internal Resistance (IR) / Impedance Test -->
         <article class="bg-white p-6 rounded-2xl shadow-md">
           <h2 class="text-lg font-semibold">Internal Resistance / Impedance Test (Power Capability)</h2>
-          <p class="text-sm text-slate-500 mt-1">Use a controlled current pulse and measure voltage drop ΔV. Use Ohm’s law to approximate internal resistance. Compare against baseline (factory or first-life) values.</p>
+          <p class="text-sm text-slate-500 mt-1">Perform a controlled current pulse and measure voltage drop (ΔV). Estimate pack-level internal resistance — critical for power & efficiency assessments. :contentReference[oaicite:8]{index=8}</p>
 
           <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
             <label class="flex flex-col">
@@ -156,21 +156,22 @@
           </div>
 
           <div id="irDisplay" class="mt-4 hidden">
-            <div class="text-sm text-slate-600">Estimated internal resistance:</div>
+            <div class="text-sm text-slate-600">Estimated internal resistance (pack):</div>
             <div id="irValue" class="mt-1 text-2xl font-bold text-indigo-600">--- Ω</div>
           </div>
 
           <div class="mt-4 text-sm text-slate-700">
-            <strong>IR formula used:</strong><br>
+            <strong>IR formula:</strong><br>
             <code>R_internal ≈ ΔV / I_pulse</code><br>
-            <strong>Decision logic:</strong> if R_current &gt; (1.5 – 2.0) × R_initial → flag for low-power / recycling.
+            Elevated IR may signal reduced power performance or safety risk.  
+            :contentReference[oaicite:9]{index=9}
           </div>
         </article>
 
-        <!-- Advanced IR: units, temp & pack->cell -->
+        <!-- Advanced IR: Pack → Cell normalization, Temp & SoC compensation -->
         <article class="bg-white p-6 rounded-2xl shadow-md">
-          <h2 class="text-lg font-semibold">Advanced IR — Units, Temp & SOC Compensation, Pack→Cell</h2>
-          <p class="text-sm text-slate-500 mt-1">Enter measured IR (Ω or mΩ), measurement temperature & SOC, and series/parallel counts to normalize to per-cell IR @25°C & SOC=50%.</p>
+          <h2 class="text-lg font-semibold">Advanced IR - per-cell & compensated IR (temp, SOC, config)</h2>
+          <p class="text-sm text-slate-500 mt-1">Normalize measured pack-level IR to per-cell basis (considering series/parallel count), and apply temperature & state-of-charge compensation to estimate equivalent cell IR at standard conditions.</p>
 
           <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
             <label class="flex flex-col">
@@ -180,7 +181,10 @@
 
             <label class="flex flex-col">
               <span class="text-xs text-slate-600">Units</span>
-              <select id="irUnits" class="mt-1 p-2 border rounded-lg"><option value="ohm">Ω</option><option value="mohm">mΩ</option></select>
+              <select id="irUnits" class="mt-1 p-2 border rounded-lg">
+                <option value="ohm">Ω</option>
+                <option value="mohm">mΩ</option>
+              </select>
             </label>
 
             <label class="flex flex-col">
@@ -189,7 +193,7 @@
             </label>
 
             <label class="flex flex-col">
-              <span class="text-xs text-slate-600">Measurement SOC (%)</span>
+              <span class="text-xs text-slate-600">Measurement SoC (%)</span>
               <input id="measSOC" type="number" step="0.1" class="mt-1 p-2 border rounded-lg" value="50" />
             </label>
 
@@ -209,11 +213,11 @@
             </label>
 
             <label class="flex flex-col">
-              <span class="text-xs text-slate-600">SOC coeff (β per %)</span>
+              <span class="text-xs text-slate-600">SoC coeff (β per %)</span>
               <input id="socCoeff" type="number" step="0.0001" class="mt-1 p-2 border rounded-lg" value="0.001" />
             </label>
 
-            <div class="flex items-end">
+            <div class="flex items-end col-span-full">
               <button id="computeIRComp" class="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg">Compute compensated IR</button>
             </div>
           </div>
@@ -221,16 +225,16 @@
           <div id="irResults" class="mt-4 hidden bg-slate-50 p-3 rounded">
             <div class="text-sm">Measured IR (Ω): <span id="irMeasured_ohm">-</span></div>
             <div class="text-sm">Equivalent cell IR (Ω): <span id="irCell_ohm">-</span></div>
-            <div class="text-sm">Temp-compensated cell IR @25°C (Ω): <span id="irCell_tempAdj">-</span></div>
-            <div class="text-sm">SOC-compensated cell IR @refSOC (Ω): <span id="irCell_socAdj">-</span></div>
-            <div class="text-sm">Final adjusted cell IR used for analysis (Ω): <span id="irCell_final">-</span></div>
+            <div class="text-sm">Temp-compensated cell IR @25 °C (Ω): <span id="irCell_tempAdj">-</span></div>
+            <div class="text-sm">SoC-compensated cell IR @ref SoC (Ω): <span id="irCell_socAdj">-</span></div>
+            <div class="text-sm">Final adjusted cell IR for analysis (Ω): <span id="irCell_final">-</span></div>
           </div>
         </article>
 
-        <!-- HPPC helper -->
+        <!-- HPPC / Pulse Test Helper -->
         <article class="bg-white p-6 rounded-2xl shadow-md">
           <h2 class="text-lg font-semibold">HPPC / Pulse Helper & Rp calculation</h2>
-          <p class="text-sm text-slate-500 mt-1">Enter one or more pulses (ΔI and ΔV) measured during HPPC/DCIR testing. The tool will compute Rp per pulse and a weighted average.</p>
+          <p class="text-sm text-slate-500 mt-1">Enter one or more current pulses (ΔI, ΔV) measured during HPPC/DCIR testing. Compute per-pulse resistance (Rp) and weighted average. Useful for module-level or pack-level diagnostics. :contentReference[oaicite:10]{index=10}</p>
 
           <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-3">
             <label class="flex flex-col"><span class="text-xs text-slate-600">Pulse ΔI (A)</span><input id="pulseDI1" type="number" step="0.1" class="mt-1 p-2 border rounded-lg" /></label>
@@ -241,8 +245,9 @@
           <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-3">
             <label class="flex flex-col"><span class="text-xs text-slate-600">Pulse ΔI3 (A)</span><input id="pulseDI3" type="number" step="0.1" class="mt-1 p-2 border rounded-lg" /></label>
             <label class="flex flex-col"><span class="text-xs text-slate-600">Pulse ΔV3 (V)</span><input id="pulseDV3" type="number" step="0.001" class="mt-1 p-2 border rounded-lg" /></label>
-            <div class="flex items-end"><button id="computeHpcc" class="w-full bg-amber-600 text-white px-4 py-2 rounded-lg">Compute Rp</button></div>
-            <div></div>
+            <div class="flex items-end col-span-full">
+              <button id="computeHpcc" class="w-full bg-amber-600 text-white px-4 py-2 rounded-lg">Compute Rp</button>
+            </div>
           </div>
 
           <div id="hppcResults" class="mt-4 hidden bg-slate-50 p-3 rounded">
@@ -254,12 +259,12 @@
         <!-- Usable Energy & Reuse Pathway Estimator -->
         <article class="bg-white p-6 rounded-2xl shadow-md">
           <h2 class="text-lg font-semibold">Usable Energy & Reuse Pathway Estimator</h2>
-          <p class="text-sm text-slate-500 mt-1">Estimate how much usable energy remains — helps decide pathway (ESS, grid-edge, recycling).</p>
+          <p class="text-sm text-slate-500 mt-1">Estimate usable energy (kWh) considering capacity degradation; initial step in matching battery to potential second-life applications (ESS, backup, recycling, etc.).</p>
 
           <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <label class="flex flex-col">
               <span class="text-xs text-slate-600">Pack size (kWh)</span>
-              <input id="packSize" type="number" step="0.01" class="mt-1 p-2 border rounded-lg" placeholder="Use nominal or measured after refurbishment" />
+              <input id="packSize" type="number" step="0.01" class="mt-1 p-2 border rounded-lg" placeholder="Use nominal or measured (after test/refurb)" />
             </label>
             <div class="flex items-end">
               <button id="estimateEnergyBtn" class="w-full bg-emerald-600 text-white px-4 py-2 rounded-lg">Estimate usable energy</button>
@@ -272,51 +277,52 @@
           </div>
 
           <div class="mt-4 text-sm text-slate-700">
-            <strong>Formula used:</strong><br>
-            <code>Usable Energy = Pack Size × (SoH / 100)</code>
+            <strong>Formula:</strong><br>
+            <code>UsableEnergy = PackSize × (SoH / 100)</code><br>
+            Use as first-order estimate (capacity-based). For power-sensitive or high-load applications, combine with IR / safety metrics.
           </div>
 
           <div class="mt-4 text-sm">
-            <strong>Suggested reuse pathway (example logic):</strong>
+            <strong>Suggested reuse pathways (example logic):</strong>
             <ul class="list-disc list-inside text-slate-700 mt-2">
-              <li>SoH ≥ 80% & IR near baseline → candidate for high-demand storage or grid services.</li>
-              <li>60% ≤ SoH &lt; 80% → residential/commercial energy storage.</li>
-              <li>40% ≤ SoH &lt; 60% → low-duty applications (backup, limited DoD).</li>
-              <li>SoH &lt; 40% or IR high → module-level refurbishment or recycling.</li>
+              <li>High SoH (≥ 80%) & low IR → high-demand ESS, grid services, frequent cycling.</li>
+              <li>Moderate SoH (60-80%) → residential/commercial ESS, solar-coupled BESS.</li>
+              <li>Lower SoH (40-60%) + acceptable IR → limited-use backup storage, low-duty ESS, infrequent cycling.</li>
+              <li>SoH &lt; 40% or high IR / safety flags → module-level refurbishment or recycling.  
+              :contentReference[oaicite:11]{index=11}</li>
             </ul>
           </div>
         </article>
 
         <!-- Sorting / Classification Engine -->
         <article class="bg-white p-6 rounded-2xl shadow-md">
-          <h2 class="text-lg font-semibold">Cell / Pack Sorting & Classification</h2>
-          <p class="text-sm text-slate-500 mt-1">Automated classification into Levels using SOH, IR and thermal/physical notes.</p>
+          <h2 class="text-lg font-semibold">Pack / Module Sorting & Classification</h2>
+          <p class="text-sm text-slate-500 mt-1">Classify records into levels (pack reuse, module rebuild, recycle) based on multi-criteria SoH and safety metrics. Flexible, configurable to match target application requirements. :contentReference[oaicite:12]{index=12}</p>
 
           <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div class="text-sm text-slate-700">Press to classify the currently loaded record (or run bulk analysis on saved records).</div>
+            <div class="text-sm text-slate-700">Click to classify current record or bulk-classify all saved records.</div>
             <div class="flex items-end">
               <button id="classifyBtn" class="w-full bg-amber-600 text-white px-4 py-2 rounded-lg">Classify current / bulk</button>
             </div>
           </div>
 
-          <div id="classificationOutput" class="mt-4 text-sm text-slate-700 bg-slate-50 p-3 rounded-md"></div>
-          <div class="mt-3 text-xs text-slate-500">Classification rules derived from training materials and datasheets.</div>
+          <div id="classificationOutput" class="mt-4 text-sm text-slate-700 bg-slate-50 p-3 rounded-md whitespace-pre-wrap"></div>
+          <div class="mt-3 text-xs text-slate-500">Classification rules are based on capacity SoH, IR-based health, safety flags, and chemistry presets.</div>
         </article>
 
       </div>
 
-      <!-- Right column: Logs, analysis, safety & exports -->
+      <!-- Right column: Logs, Safety / BMS, Records, Exports, Analysis -->
       <aside class="space-y-6">
 
         <div class="bg-white p-6 rounded-2xl shadow-sm">
-          <h3 class="text-lg font-semibold">Safety & BMS / Module Checks</h3>
-          <p class="text-sm text-slate-500 mt-1">Record results from visual inspection, BMS status, thermal scan, cell balance, insulation tests, fault tests, certification status, etc.</p>
-
+          <h3 class="text-lg font-semibold">Safety & BMS / Module-level Checks</h3>
+          <p class="text-sm text-slate-500 mt-1">Record results from visual inspection, BMS status, thermal scan, insulation test, cell balance testing, any prior fault / damage history.</p>
           <div class="mt-3 text-sm">
-            <label class="flex items-center gap-2"><input id="visualOK" type="checkbox" class="w-4 h-4" /> <span>Visual inspection OK</span></label>
-            <label class="flex items-center gap-2 mt-1"><input id="bmsOK" type="checkbox" class="w-4 h-4" /> <span>BMS communications OK</span></label>
-            <label class="flex items-center gap-2 mt-1"><input id="thermalOK" type="checkbox" class="w-4 h-4" /> <span>No hotspots on thermal scan</span></label>
-            <div class="mt-2 text-xs text-slate-500">BMS thresholds (OV/UV, balance voltage, balance current, temperature protections) are available and used in diagnostics.</div>
+            <label class="flex items-center gap-2"><input id="visualOK" type="checkbox" class="w-4 h-4" /> <span>Visual inspection OK / No visible damage</span></label>
+            <label class="flex items-center gap-2 mt-1"><input id="bmsOK" type="checkbox" class="w-4 h-4" /> <span>BMS / electronics check OK</span></label>
+            <label class="flex items-center gap-2 mt-1"><input id="thermalOK" type="checkbox" class="w-4 h-4" /> <span>No hotspots / thermal anomalies on scan</span></label>
+            <label class="flex items-center gap-2 mt-1"><input id="insulationOK" type="checkbox" class="w-4 h-4" /> <span>Insulation / HV isolation OK</span></label>
           </div>
         </div>
 
@@ -325,38 +331,36 @@
           <div id="fullLog" class="mt-2 text-sm text-slate-600 max-h-64 overflow-auto"></div>
           <div class="mt-4 flex gap-2">
             <button id="downloadLogBtn" class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm">Download log (JSON)</button>
-            <button id="clearAllBtn" class="bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm">Clear logs</button>
+            <button id="clearAllBtn" class="bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm">Clear logs & records</button>
           </div>
-          <div class="mt-2 text-xs text-slate-500">Useful for traceability and reporting.</div>
+          <div class="mt-2 text-xs text-slate-500">Useful for documentation, audit, traceability.</div>
         </div>
 
         <div class="bg-white p-6 rounded-2xl shadow-sm">
-          <h3 class="text-lg font-semibold">Analysis & Recommendations</h3>
-          <div class="mt-2 text-sm text-slate-600">Select a saved record and run a combined analysis using capacity & IR heuristics and chemistry presets.</div>
-
-          <div class="mt-3">
+          <h3 class="text-lg font-semibold">Analysis & Recommendation</h3>
+          <p class="text-sm text-slate-600">Load saved record → run full analysis combining SoH, IR, safety, chemistry presets → get recommendation for reuse or recycling.</p>
+          <div class="mt-2">
             <select id="recordSelect" class="w-full p-2 border rounded-lg"></select>
             <button id="runAnalysisBtn" class="mt-3 w-full bg-indigo-600 text-white px-4 py-2 rounded-lg">Run analysis</button>
-            <button id="generateReportBtn" class="mt-2 w-full bg-gray-700 text-white px-4 py-2 rounded-lg">Generate PDF report for selected</button>
+            <button id="generateReportBtn" class="mt-2 w-full bg-gray-700 text-white px-4 py-2 rounded-lg">Generate PDF report</button>
           </div>
-
           <div id="analysisOutput" class="mt-3 text-sm text-slate-700 bg-slate-50 p-3 rounded-md max-h-60 overflow-auto">
             <pre id="analysisPre" class="text-xs"></pre>
           </div>
         </div>
 
         <div class="bg-white p-6 rounded-2xl shadow-sm">
-          <h3 class="text-lg font-semibold">Saved Records</h3>
+          <h3 class="text-lg font-semibold">Saved Battery Records</h3>
           <div class="mt-2 scroll-x">
             <table id="recordsTable" class="w-full text-sm table-auto border-collapse">
               <thead class="bg-slate-100 sticky top-0">
                 <tr>
-                  <th class="p-2 text-left">ID</th>
+                  <th class="p-2 text-left">Record ID</th>
                   <th class="p-2 text-left">Date</th>
                   <th class="p-2 text-left">Chemistry</th>
                   <th class="p-2 text-left">Nominal kWh</th>
                   <th class="p-2 text-left">Measured kWh</th>
-                  <th class="p-2 text-left">SoH%</th>
+                  <th class="p-2 text-left">SoH (%)</th>
                   <th class="p-2 text-left">Actions</th>
                 </tr>
               </thead>
@@ -369,61 +373,52 @@
 
     </main>
 
+    <!-- Charts: SoH & IR Trends -->
     <section class="bg-white p-6 rounded-2xl shadow-md mt-6">
-      <h3 class="text-lg font-semibold">Plots & Quick Visuals</h3>
+      <h3 class="text-lg font-semibold">Health Trends - SoH & IR across stored records</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-        <div>
-          <canvas id="sohChart" height="160"></canvas>
-        </div>
-        <div>
-          <canvas id="irChart" height="160"></canvas>
-        </div>
+        <div><canvas id="sohChart" height="140"></canvas></div>
+        <div><canvas id="irChart" height="140"></canvas></div>
       </div>
-      <div class="mt-3 text-xs text-slate-500">Charts show historical SoH and IR across saved records.</div>
+      <div class="mt-3 text-xs text-slate-500">Charts showing SoH (capacity) and IR (mΩ) evolution across recorded packs/modules.</div>
     </section>
 
-    <footer class="mt-8 text-xs text-slate-500">Prototype — saved locally in localStorage. For production, replace persistence with a server and implement security.</footer>
+    <footer class="mt-8 text-xs text-slate-500">Prototype V2 - data stored locally. For production use, integrate with backend, user-auth, versioning, secure storage.</footer>
   </div>
 
+  <!-- Hidden CSV input for imports -->
   <input id="csvFileInput" type="file" accept=".csv" style="display:none" />
 
 <script>
-/* -------------------------
-   Combined Data store & presets
-   ------------------------- */
+// -----------------------------
+// Data store & Presets
+// -----------------------------
 
-const STORAGE_KEY = 'battery_repurpose_combined_v1';
+const STORAGE_KEY = 'battery_repurpose_v2';
 const log = [];
 
-function nowDate(){ return new Date().toISOString().slice(0,10); }
 function safeNum(v){ const n = Number(v); return Number.isFinite(n) ? n : null; }
+function nowDate(){ return new Date().toISOString().slice(0,10); }
 
 const chemistryPresets = {
-  'NMC': { typicalCycleLife: 300, energyDensityWhKg: 200, nominalV: 3.7, baseline_mOhm_cell: 70, alpha:0.015, beta:0.001 },
-  'LFP': { typicalCycleLife: 1500, energyDensityWhKg: 110, nominalV: 3.2, baseline_mOhm_cell: 20, alpha:0.010, beta:0.0008 },
-  'NCA': { typicalCycleLife: 1000, energyDensityWhKg: 240, nominalV: 3.7, baseline_mOhm_cell: 70, alpha:0.015, beta:0.001 },
-  'LTO': { typicalCycleLife: 10000, energyDensityWhKg: 80, nominalV: 2.3, baseline_mOhm_cell: 25, alpha:0.005, beta:0.0004 },
-  'Other': { typicalCycleLife: 1000, energyDensityWhKg: 150, nominalV: 3.2, baseline_mOhm_cell: 50, alpha:0.01, beta:0.001 }
+  'NMC': { typicalCycleLife: 300, baseline_mOhm_cell: 70 },
+  'LFP': { typicalCycleLife: 1500, baseline_mOhm_cell: 20 },
+  'NCA': { typicalCycleLife: 1000, baseline_mOhm_cell: 70 },
+  'LTO': { typicalCycleLife: 10000, baseline_mOhm_cell: 25 },
+  'Other': { typicalCycleLife: 800, baseline_mOhm_cell: 50 }
 };
 
-const bmsDefaults = {
-  cellOverVoltageCut: 3.75,
-  cellOverVoltageRelease: 3.60,
-  cellUnderVoltageCut: 2.20,
-  cellUnderVoltageRelease: 2.60,
-  balanceTurnOnV: 3.40,
-  balanceCurrent_mA_min: 20,
-  balanceCurrent_mA_max: 110,
-  continuousCurrentA_min: 50,
-  continuousCurrentA_max: 200
-};
+function getRecords(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch(e){ return []; }
+}
 
-function getRecords(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e){ return []; } }
 function saveRecord(obj){
   const arr = getRecords();
   const idx = arr.findIndex(r => r.recordId === obj.recordId);
   obj.updatedAt = new Date().toISOString();
-  if(idx >= 0) arr[idx] = obj; else arr.unshift(obj);
+  if(idx >= 0) arr[idx] = obj;
+  else arr.unshift(obj);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
   renderTable();
   populateSelect();
@@ -438,34 +433,34 @@ function deleteRecord(recordId){
   populateSelect();
 }
 
-function clearAllRecords(){
-  localStorage.removeItem(STORAGE_KEY);
-  renderTable();
-  populateSelect();
-  addToLog({ type: 'Clear', detail: 'Cleared all records' });
+// Log / history functions
+function addToLog(entry){
+  entry.ts = new Date().toISOString();
+  log.push(entry);
+  renderLog();
 }
-
-function addToLog(entry){ entry.ts = new Date().toISOString(); log.push(entry); renderLog(); }
 function renderLog(){
   const w = document.getElementById('fullLog');
   if(!w) return;
   w.innerHTML = '';
-  if(log.length === 0){ w.innerHTML = '<div class="text-slate-400">No entries yet.</div>'; return; }
+  if(log.length === 0){
+    w.innerHTML = '<div class="text-slate-400">No entries yet.</div>';
+    return;
+  }
   log.slice().reverse().forEach(e=>{
     const d = document.createElement('div');
-    d.className='border-b border-slate-100 pb-1 my-1';
+    d.className = 'border-b border-slate-100 pb-1 my-1';
     d.innerHTML = `<div class="text-xs text-slate-500">${e.ts}</div><div class="text-sm">${e.type}: ${e.detail}</div>`;
     w.appendChild(d);
   });
 }
 
-/* -------------------------
-   UI events: save, export, clear
-   ------------------------- */
-
+// -----------------------------
+// UI events: Save, Export, Import, Clear
+// -----------------------------
 document.getElementById('saveRecord').addEventListener('click', ()=>{
-  const idField = document.getElementById('recordId');
-  const id = idField.value.trim() || ('R-'+Date.now());
+  let id = document.getElementById('recordId').value.trim();
+  if(!id) id = 'R-'+Date.now();
   const obj = {
     recordId: id,
     origID: document.getElementById('origID').value.trim(),
@@ -482,70 +477,69 @@ document.getElementById('saveRecord').addEventListener('click', ()=>{
     inspectionDate: nowDate()
   };
   saveRecord(obj);
-  addToLog({ type: 'Record saved', detail: `${obj.recordId} (${obj.chemistry})` });
+  addToLog({ type: 'Record saved', detail: `${obj.recordId} (chemistry: ${obj.chemistry})` });
   document.getElementById('captureForm').reset();
   document.getElementById('quickStatus').textContent = `Saved ${obj.recordId}`;
 });
 
 document.getElementById('exportAll').addEventListener('click', ()=>{
   const arr = getRecords();
-  const blob = new Blob([JSON.stringify(arr, null, 2)], {type: 'application/json'});
+  const blob = new Blob([JSON.stringify(arr, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'battery_records_combined.json'; a.click(); URL.revokeObjectURL(url);
+  const a = document.createElement('a'); a.href = url; a.download = 'battery_records_v2.json'; a.click(); URL.revokeObjectURL(url);
   addToLog({ type: 'Export', detail: `Exported ${arr.length} records` });
 });
 
 document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
   const arr = getRecords();
   if(!arr.length) return alert('No records to export');
-  const headers = ['recordId','inspectionDate','chemistry','nominalKWh','measuredKWh','measuredIR_ohm','physicalNotes'];
-  const csv = [headers.join(',')].concat(arr.map(r=>headers.map(h=>escapeCsv(String(r[h] ?? ''))).join(','))).join('\n');
-  const blob = new Blob([csv], {type: 'text/csv'});
+  const headers = ['recordId','inspectionDate','chemistry','nominalKWh','nominalV','physicalNotes','measuredKWh','measuredIR_ohm'];
+  const csv = [headers.join(',')].concat(arr.map(r=>headers.map(h=>escapeCsv(String(r[h] ?? ''))).join(',')).join('\n'));
+  const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'battery_records_combined.csv'; a.click(); URL.revokeObjectURL(url);
+  const a = document.createElement('a'); a.href = url; a.download = 'battery_records_v2.csv'; a.click(); URL.revokeObjectURL(url);
   addToLog({ type: 'Export CSV', detail: `Exported ${arr.length} records` });
 });
 
 function escapeCsv(val){
   if(val == null) return '';
-  if(/[,"\n]/.test(val)) return '"' + val.replace(/"/g,'""') + '"';
+  if(/["\n,]/.test(val)) return '"' + val.replace(/"/g, '""') + '"';
   return val;
 }
 
 document.getElementById('clearFormBtn').addEventListener('click', ()=>{ document.getElementById('captureForm').reset(); });
 
-/* -------------------------
-   CSV import (robust, handles quoted fields)
-   ------------------------- */
-
 document.getElementById('importCsvBtn').addEventListener('click', ()=> document.getElementById('csvFileInput').click());
-document.getElementById('csvFileInput').addEventListener('change', (e)=>{
+document.getElementById('csvFileInput').addEventListener('change',(e)=>{
   const f = e.target.files[0];
   if(!f) return;
   const reader = new FileReader();
-  reader.onload = (ev) => parseCsvIntoRecords(ev.target.result);
+  reader.onload = ev => parseCsvIntoRecords(ev.target.result);
   reader.readAsText(f);
 });
 
 function parseCsvIntoRecords(csv){
-  // Basic CSV parser supporting quoted fields and commas inside quotes.
   const rows = csv.split(/\r?\n/).filter(r => r.trim().length);
   if(rows.length < 1) return alert('CSV empty');
-  const headers = parseCsvLine(rows[0]).map(h=>h.trim());
-  let count = 0;
-  for(let i=1;i<rows.length;i++){
+  const headers = parseCsvLine(rows[0]).map(h => h.trim().toLowerCase());
+  let count=0;
+  for(let i=1; i<rows.length; i++){
     const cols = parseCsvLine(rows[i]);
     if(cols.length === 0) continue;
     const map = {};
     headers.forEach((h, idx) => map[h] = cols[idx] ?? '');
     const obj = {
-      recordId: (map['recordid'] && map['recordid'].trim()) || ('R-'+Date.now()+i),
+      recordId: map['recordid'] || ('R-'+Date.now()+i),
       inspectionDate: nowDate(),
-      chemistry: (map['chemistry'] && map['chemistry'].trim()) || 'Other',
+      chemistry: map['chemistry'] || 'Other',
       nominalKWh: safeNum(map['nominalkwh']),
+      nominalV: safeNum(map['nominalv']),
+      physicalNotes: map['physicalnotes'] || '',
       measuredKWh: safeNum(map['measuredkwh']),
-      measuredIR_ohm: safeNum(map['measuredir_ohm']||map['measuredir']),
-      physicalNotes: (map['physicalnotes'] && map['physicalnotes'].trim()) || ''
+      measuredIR_ohm: safeNum(map['measuredir_ohm']),
+      compensatedCellIR_ohm: null,
+      hpcc_avg_rp_ohm: null,
+      cellVoltages: null
     };
     saveRecord(obj);
     count++;
@@ -554,154 +548,130 @@ function parseCsvIntoRecords(csv){
 }
 
 function parseCsvLine(line){
-  const out = [];
-  let cur = '';
-  let inQuotes = false;
-  for(let i=0;i<line.length;i++){
+  const out = []; let cur=''; let inQuotes=false;
+  for(let i=0; i<line.length; i++){
     const ch = line[i];
     if(inQuotes){
-      if(ch === '"'){
-        if(line[i+1] === '"'){ cur += '"'; i++; } else { inQuotes = false; }
-      } else { cur += ch; }
+      if(ch === '"'){ if(line[i+1] === '"'){ cur+='"'; i++; } else inQuotes=false; }
+      else cur += ch;
     } else {
-      if(ch === ','){ out.push(cur); cur = ''; }
-      else if(ch === '"'){ inQuotes = true; }
-      else { cur += ch; }
+      if(ch === ','){ out.push(cur); cur=''; }
+      else if(ch === '"'){ inQuotes=true; }
+      else cur += ch;
     }
   }
   out.push(cur);
   return out;
 }
 
-/* -------------------------
-   SoH, IR, Energy calculations
-   ------------------------- */
-
+// -----------------------------
+// SoH, IR, Energy, Classification logic
+// -----------------------------
 document.getElementById('computeSoHBtn').addEventListener('click', ()=>{
   const measured = safeNum(document.getElementById('measuredKWh').value);
-  // prefer explicit ref field, else nominalKWh from form or a loaded record
   let ref = safeNum(document.getElementById('refKWh').value) || safeNum(document.getElementById('nominalKWh').value);
-  // if there's a loaded record, try to use that nominal capacity
-  const curId = document.getElementById('recordId').value.trim();
-  if(!ref && curId){
-    const r = getRecords().find(x => x.recordId === curId);
+  const currentId = document.getElementById('recordId').value.trim();
+  if(!ref && currentId){
+    const r = getRecords().find(x => x.recordId === currentId);
     if(r) ref = safeNum(r.nominalKWh);
   }
-  if (measured !== null && ref !== null && ref > 0){
+  if(measured !== null && ref !== null && ref > 0){
     const soh = (measured / ref) * 100;
     document.getElementById('sohPct').textContent = soh.toFixed(2) + '%';
     document.getElementById('sohDisplay').classList.remove('hidden');
-    addToLog({ type: 'SoH Test', detail: `Measured ${measured} kWh vs ref ${ref} kWh, SoH = ${soh.toFixed(2)}%` });
+    addToLog({ type: 'SoH Test', detail: `Measured ${measured} kWh vs ref ${ref} kWh → SoH ${soh.toFixed(2)}%` });
 
-    // attach measured to currently loaded record if any
-    if(curId){
+    if(currentId){
       const arr = getRecords();
-      const r = arr.find(x => x.recordId === curId);
-      if(r){ r.measuredKWh = measured; saveRecord(r); }
+      const rec = arr.find(x => x.recordId === currentId);
+      if(rec){ rec.measuredKWh = measured; saveRecord(rec); }
     }
     updateCharts();
-  } else {
-    alert('Enter measured and reference capacities (or load a record with nominal capacity)');
-  }
+  } else alert('Enter measured and reference capacities (or load record with nominal Capacity)');
 });
 
-/* Basic IR from single pulse (ΔV/ I) */
 document.getElementById('computeIRBtn').addEventListener('click', ()=>{
   const I = safeNum(document.getElementById('pulseCurrent').value);
   const dV = safeNum(document.getElementById('voltageDrop').value);
-  if (I !== null && I > 0 && dV !== null){
-    const R = dV / I; // ohms
+  if(I !== null && I > 0 && dV !== null){
+    const R = dV / I;
     document.getElementById('irValue').textContent = R.toFixed(4) + ' Ω';
     document.getElementById('irDisplay').classList.remove('hidden');
-    addToLog({ type: 'IR Test', detail: `Pulse I=${I}A, ΔV=${dV}V → R ≈ ${R.toFixed(4)} Ω` });
+    addToLog({ type: 'IR Test', detail: `Pulse I=${I}A, dV=${dV}V → R ≈ ${R.toFixed(4)} Ω` });
 
-    const curId = document.getElementById('recordId').value.trim();
-    if(curId){
+    const currentId = document.getElementById('recordId').value.trim();
+    if(currentId){
       const arr = getRecords();
-      const r = arr.find(x => x.recordId === curId);
-      if(r){ r.measuredIR_ohm = R; saveRecord(r); }
+      const rec = arr.find(x => x.recordId === currentId);
+      if(rec){ rec.measuredIR_ohm = R; saveRecord(rec); }
     }
     updateCharts();
-  } else {
-    alert('Enter pulse current and voltage drop');
-  }
+  } else alert('Enter valid pulse current and voltage drop');
 });
 
-/* Advanced IR helpers: units, pack->cell, temp & SOC compensation */
-
+// Advanced IR compensation (pack->cell, temp & SoC)
 function unitsToOhm(val, units){
-  if(val === null || val === undefined) return null;
-  const n = Number(val);
-  if(!Number.isFinite(n)) return null;
-  if(units === 'mohm') return n / 1000;
-  return n;
+  const n = safeNum(val);
+  if(n === null) return null;
+  return units === 'mohm' ? n / 1000 : n;
 }
-function packToCellIR(R_pack_ohm, Ns, Np){
-  if(R_pack_ohm === null || Ns <= 0 || Np <= 0) return null;
-  // R_cell = R_pack * (Np / Ns)
-  return R_pack_ohm * (Np / Ns);
+function packToCellIR(R_pack, Ns, Np){
+  if(R_pack === null || Ns <= 0 || Np <= 0) return null;
+  return R_pack * (Np / Ns);
 }
 function tempCompensate(R_cell, T_meas, T_ref=25, alpha=0.01){
-  if(R_cell === null) return null;
-  return R_cell / (1 + alpha * (T_meas - T_ref));
+  return R_cell / (1 + alpha*(T_meas - T_ref));
 }
 function socCompensate(R_cell, SOC_meas, SOC_ref=50, beta=0.001){
-  if(R_cell === null) return null;
-  return R_cell / (1 + beta * (SOC_meas - SOC_ref));
+  return R_cell / (1 + beta*(SOC_meas - SOC_ref));
 }
 
 document.getElementById('computeIRComp').addEventListener('click', ()=>{
-  const measured = safeNum(document.getElementById('measuredIR').value);
+  const meas = safeNum(document.getElementById('measuredIR').value);
   const units = document.getElementById('irUnits').value;
+  const R_ohm = unitsToOhm(meas, units);
   const temp = safeNum(document.getElementById('measTemp').value) ?? 25;
   const soc = safeNum(document.getElementById('measSOC').value) ?? 50;
   const Ns = Math.max(1, parseInt(document.getElementById('seriesCount').value) || 1);
   const Np = Math.max(1, parseInt(document.getElementById('parallelCount').value) || 1);
-  const tempCoeff = safeNum(document.getElementById('tempCoeff').value) ?? 0.01;
-  const socCoeff = safeNum(document.getElementById('socCoeff').value) ?? 0.001;
+  const alpha = safeNum(document.getElementById('tempCoeff').value) ?? 0.01;
+  const beta = safeNum(document.getElementById('socCoeff').value) ?? 0.001;
 
-  if (measured === null) return alert('Enter measured IR');
-  const R_ohm = unitsToOhm(measured, units);
-  document.getElementById('irMeasured_ohm').textContent = R_ohm !== null ? (typeof R_ohm.toExponential === 'function' ? R_ohm.toExponential(4) : R_ohm) : '-';
+  if(R_ohm === null) return alert('Enter valid IR value');
 
-  const R_cell_ohm = packToCellIR(R_ohm, Ns, Np);
-  document.getElementById('irCell_ohm').textContent = R_cell_ohm !== null ? (typeof R_cell_ohm.toExponential === 'function' ? R_cell_ohm.toExponential(4) : R_cell_ohm) : '-';
+  const R_cell = packToCellIR(R_ohm, Ns, Np);
+  const R_temp = tempCompensate(R_cell, temp, 25, alpha);
+  const R_soc = socCompensate(R_temp, soc, 50, beta);
 
-  const R_temp = tempCompensate(R_cell_ohm, temp, 25, tempCoeff);
-  document.getElementById('irCell_tempAdj').textContent = R_temp !== null ? (typeof R_temp.toExponential === 'function' ? R_temp.toExponential(4) : R_temp) : '-';
-
-  const R_soc = socCompensate(R_temp, soc, 50, socCoeff);
-  document.getElementById('irCell_socAdj').textContent = R_soc !== null ? (typeof R_soc.toExponential === 'function' ? R_soc.toExponential(4) : R_soc) : '-';
-
-  document.getElementById('irCell_final').textContent = R_soc !== null ? (typeof R_soc.toExponential === 'function' ? R_soc.toExponential(4) : R_soc) : '-';
+  document.getElementById('irMeasured_ohm').textContent = R_ohm.toExponential ? R_ohm.toExponential(4) : R_ohm;
+  document.getElementById('irCell_ohm').textContent = R_cell.toExponential ? R_cell.toExponential(4) : R_cell;
+  document.getElementById('irCell_tempAdj').textContent = R_temp.toExponential ? R_temp.toExponential(4) : R_temp;
+  document.getElementById('irCell_socAdj').textContent = R_soc.toExponential ? R_soc.toExponential(4) : R_soc;
+  document.getElementById('irCell_final').textContent = R_soc.toExponential ? R_soc.toExponential(4) : R_soc;
   document.getElementById('irResults').classList.remove('hidden');
 
-  // save to current record if loaded
-  const curId = document.getElementById('recordId').value.trim();
-  if(curId){
+  const currentId = document.getElementById('recordId').value.trim();
+  if(currentId){
     const arr = getRecords();
-    const r = arr.find(x => x.recordId === curId);
-    if(r){
-      r.measuredIR_ohm = R_ohm;
-      r.compensatedCellIR_ohm = R_soc;
-      saveRecord(r);
-      addToLog({ type: 'IR measure', detail: `Saved IR for ${r.recordId}: raw=${R_ohm}Ω cellAdj=${R_soc}Ω` });
+    const rec = arr.find(x => x.recordId === currentId);
+    if(rec){
+      rec.measuredIR_ohm = R_ohm;
+      rec.compensatedCellIR_ohm = R_soc;
+      saveRecord(rec);
+      addToLog({ type: 'IR Compensated', detail: `Record ${rec.recordId}: cell IR adj = ${R_soc.toExponential ? R_soc.toExponential(4) : R_soc} Ω` });
     }
   }
   updateCharts();
 });
 
-/* -------------------------
-   HPPC helper: compute Rp = ΔV/ΔI per pulse
-   ------------------------- */
-
+// HPPC / Rp calculation
 function computeRpList(){
   const pulses = [];
-  for(let i=1;i<=3;i++){
+  for(let i=1; i<=3; i++){
     const dI = safeNum(document.getElementById('pulseDI'+i).value);
     const dV = safeNum(document.getElementById('pulseDV'+i).value);
     if(dI !== null && dV !== null && dI !== 0){
-      pulses.push({dI,dV, rp: dV / dI});
+      pulses.push({ dI, dV, rp: dV / dI });
     }
   }
   return pulses;
@@ -712,164 +682,133 @@ document.getElementById('computeHpcc').addEventListener('click', ()=>{
   if(pulses.length === 0) return alert('Enter at least one pulse ΔI and ΔV');
   const rpList = pulses.map(p => p.rp);
   const avg = rpList.reduce((s,v) => s + v, 0) / rpList.length;
-  document.getElementById('rpList').textContent = rpList.map(v => (typeof v.toExponential === 'function' ? v.toExponential(4) : v)).join('\n');
-  document.getElementById('rpAvg').textContent = (typeof avg.toExponential === 'function' ? avg.toExponential(4) : avg);
+  document.getElementById('rpList').textContent = rpList.map(v => v.toExponential ? v.toExponential(4) : v).join('\n');
+  document.getElementById('rpAvg').textContent = avg.toExponential ? avg.toExponential(4) : avg;
   document.getElementById('hppcResults').classList.remove('hidden');
-  addToLog({ type: 'HPPC', detail: `Computed avg Rp=${avg}Ω from ${rpList.length} pulses` });
+  addToLog({ type: 'HPPC', detail: `Average Rp = ${ (avg.toExponential ? avg.toExponential(4) : avg) } Ω over ${rpList.length} pulses` });
 
-  // Optionally save rp as pack IR to current record
-  const curId = document.getElementById('recordId').value.trim();
-  if(curId){
+  const currentId = document.getElementById('recordId').value.trim();
+  if(currentId){
     const arr = getRecords();
-    const r = arr.find(x => x.recordId === curId);
-    if(r){ r.hpcc_avg_rp_ohm = avg; saveRecord(r); }
+    const rec = arr.find(x => x.recordId === currentId);
+    if(rec){
+      rec.hpcc_avg_rp_ohm = avg;
+      saveRecord(rec);
+    }
   }
+  updateCharts();
 });
 
-/* -------------------------
-   Analysis & classification
-   ------------------------- */
+// Usable Energy Estimator
+document.getElementById('estimateEnergyBtn').addEventListener('click', ()=>{
+  const pack = safeNum(document.getElementById('packSize').value);
+  const sohText = document.getElementById('sohPct').textContent;
+  const soh = safeNum(sohText);
+  if(pack !== null && soh !== null){
+    const usable = (pack * (soh / 100)).toFixed(2);
+    document.getElementById('usableKWh').textContent = usable + ' kWh';
+    document.getElementById('energyDisplay').classList.remove('hidden');
+    addToLog({ type: 'Energy Estimate', detail: `Pack ${pack} kWh × SoH ${soh}% → usable ≈ ${usable} kWh` });
+  } else alert('Ensure pack size and SoH are defined');
+});
 
-function computeSOH_percent(r){
-  if(!r) return null;
-  const measured = safeNum(r.measuredKWh);
-  const nominal = safeNum(r.nominalKWh);
-  if(measured === null || nominal === null || nominal === 0) return null;
-  return (Number(measured) / Number(nominal)) * 100;
+// Analysis & Classification
+function computeSOH_capacity(r){
+  if(!r || r.measuredKWh == null || r.nominalKWh == null) return null;
+  return (Number(r.measuredKWh) / Number(r.nominalKWh)) * 100;
 }
 
-function estimateSOH_fromResistance(r){
-  if(!r) return null;
+function estimateSOH_resistance(r){
   const chem = r.chemistry || 'Other';
-  const baseline_mOhm = (chemistryPresets[chem] && chemistryPresets[chem].baseline_mOhm_cell) || 50;
-  // prefer compensated cell IR, fallback to measuredIR_ohm scaled to cell if no compensated value
-  let cellIR = null;
-  if (safeNum(r.compensatedCellIR_ohm) !== null) cellIR = Number(r.compensatedCellIR_ohm);
-  else if (safeNum(r.measuredIR_ohm) !== null && safeNum(r.hpcc_avg_rp_ohm) === null) {
-    // if measuredIR_ohm exists but not yet converted to cell scale, assume it was measured per-pack; cannot safely convert here
-    cellIR = Number(r.measuredIR_ohm);
-  } else if (safeNum(r.hpcc_avg_rp_ohm) !== null) {
-    // hpcc avg is likely pack-level Rp — user should have used pack->cell conversion earlier; attempt naive use
-    cellIR = Number(r.hpcc_avg_rp_ohm);
-  }
-  if(cellIR === null || !Number.isFinite(cellIR) || cellIR <= 0) return null;
-  const cur_mOhm = cellIR * 1000; // convert ohm -> mΩ
-  const soh = Math.max(5, (baseline_mOhm / cur_mOhm) * 100);
-  return Math.min(100, soh);
+  const baseline = chemistryPresets[chem]?.baseline_mOhm_cell || 50;
+  const cellIR = r.compensatedCellIR_ohm !== null ? Number(r.compensatedCellIR_ohm) : (r.measuredIR_ohm !== null ? Number(r.measuredIR_ohm) : null);
+  if(cellIR === null || cellIR <= 0) return null;
+  const current_mOhm = cellIR * 1000;
+  const soh = (baseline / current_mOhm) * 100;
+  return Math.min(100, Math.max(0, soh));
 }
 
-function analysisForRecord(r){
-  const results = {};
-  results.recordId = r.recordId;
-  results.SOH_capacity_pct = computeSOH_percent(r);
-  results.SOH_resistance_pct = estimateSOH_fromResistance(r);
-  results.chemistry_preset = chemistryPresets[r.chemistry] || chemistryPresets['Other'];
-
-  const sohCap = results.SOH_capacity_pct || 0;
-  const sohRes = results.SOH_resistance_pct || 0;
-
-  results.recommendation = 'Further evaluation required';
-  if(sohCap >= 80 && sohRes >= 60){
-    results.recommendation = 'Good candidate for stationary energy storage (ESS) — reconfigure BMS, cycle testing.';
-  } else if(sohCap >= 60){
-    results.recommendation = 'Possible candidate for residential/commercial ESS or module-level reuse after balancing.';
+function analysisFor(r){
+  const res = {};
+  res.recordId = r.recordId;
+  res.SOH_capacity_pct = computeSOH_capacity(r);
+  res.SOH_resistance_pct = estimateSOH_resistance(r);
+  res.chemistry = r.chemistry;
+  res.recommendedUse = 'Undetermined';
+  if(res.SOH_capacity_pct >= 80 && (res.SOH_resistance_pct == null || res.SOH_resistance_pct >= 60)){
+    res.recommendedUse = 'Stationary ESS – high demand';
+  } else if(res.SOH_capacity_pct >= 60){
+    res.recommendedUse = 'Residential/Commercial ESS or module reuse';
   } else {
-    results.recommendation = 'Consider recycling or deep diagnostic — not recommended for second-life ESS.';
+    res.recommendedUse = 'Module-level rebuild or recycling';
   }
-
-  if((r.nominalKWh || r.measuredKWh) && results.SOH_capacity_pct){
-    const base = safeNum(r.measuredKWh) || safeNum(r.nominalKWh);
-    if(base !== null) results.estimatedUsableKWh = (Number(base) * (results.SOH_capacity_pct / 100)).toFixed(2);
+  if(r.physicalNotes && /swelling|corrosion|damage|leak/i.test(r.physicalNotes)){
+    res.safetyFlag = true;
+  } else res.safetyFlag = false;
+  if(r.measuredKWh != null){
+    res.estimatedUsable_kWh = (Number(r.measuredKWh) * (res.SOH_capacity_pct / 100)).toFixed(2);
   }
-
-  const baseCycles = results.chemistry_preset.typicalCycleLife || 1000;
-  results.estimatedRemainingCycles = Math.round(baseCycles * ((results.SOH_capacity_pct || 50) / 100));
-
-  // safety flags
-  results.safetyFlags = [];
-  if(r.physicalNotes && /swelling|corrosion|damag|leak/i.test(r.physicalNotes)) results.safetyFlags.push('Physical damage noted');
-  if(results.SOH_capacity_pct && results.SOH_capacity_pct < 40) results.safetyFlags.push('Low SoH');
-
-  // BMS checks if cell voltages array present
-  if(Array.isArray(r.cellVoltages)){
-    const over = r.cellVoltages.filter(v => safeNum(v) !== null && safeNum(v) > bmsDefaults.cellOverVoltageCut);
-    const under = r.cellVoltages.filter(v => safeNum(v) !== null && safeNum(v) < bmsDefaults.cellUnderVoltageCut);
-    if(over.length) results.safetyFlags.push('Some cells above BMS OV threshold');
-    if(under.length) results.safetyFlags.push('Some cells below BMS UV threshold');
-  }
-
-  return results;
+  return res;
 }
 
 document.getElementById('runAnalysisBtn').addEventListener('click', ()=>{
-  const id = document.getElementById('recordSelect').value;
-  if(!id) return alert('No record selected');
-  const r = getRecords().find(x => x.recordId === id);
-  if(!r) return alert('Record not found');
-  const out = analysisForRecord(r);
+  const sel = document.getElementById('recordSelect').value;
+  if(!sel) return alert('Select a record');
+  const rec = getRecords().find(r=> r.recordId === sel);
+  if(!rec) return alert('Record not found');
+  const out = analysisFor(rec);
   document.getElementById('analysisPre').textContent = JSON.stringify(out, null, 2);
-  addToLog({ type: 'Analysis', detail: `Ran analysis for ${r.recordId}` });
+  addToLog({ type: 'Analysis', detail: `Analyzed ${rec.recordId}` });
 });
 
-/* -------------------------
-   Classification rules (levels)
-   ------------------------- */
-
 function classifyRecord(r){
-  const res = analysisForRecord(r);
-  const soh = res.SOH_capacity_pct || 0;
-  const irSoH = res.SOH_resistance_pct || 0;
-  // simple rules
-  if(soh >= 80 && irSoH >= 60 && res.safetyFlags.length === 0){
-    return { level: 1, label: 'Level 1 - Pack reuse', reason: 'High SoH, IR near baseline, safe' };
+  const a = analysisFor(r);
+  if(a.SOH_capacity_pct >= 80 && (!a.SOH_resistance_pct || a.SOH_resistance_pct >= 60) && !a.safetyFlag){
+    return { level: 1, label: 'Level 1 – Pack reuse', reason: 'High SoH, IR OK, no safety issues' };
   }
-  if(soh >= 60){
-    return { level: 2, label: 'Level 2 - Module rebuild', reason: 'Moderate SoH, consider module balancing and reconditioning' };
+  if(a.SOH_capacity_pct >= 60){
+    return { level: 2, label: 'Level 2 – Module rebuild / ESS', reason: 'Moderate SoH – suitable for low/medium duty' };
   }
-  return { level: 3, label: 'Level 3 - Cell-level repurpose or recycle', reason: 'Low SoH or safety flags present' };
+  return { level: 3, label: 'Level 3 – Cell-level repurpose / recycle', reason: 'Low SoH or safety concerns' };
 }
 
 document.getElementById('classifyBtn').addEventListener('click', ()=>{
   const sel = document.getElementById('recordSelect').value;
-  const arr = getRecords();
-  let output = '';
+  let out = '';
   if(sel){
-    const r = arr.find(x => x.recordId === sel);
-    if(!r) return alert('Record not found');
+    const r = getRecords().find(r=> r.recordId === sel);
     const c = classifyRecord(r);
-    output = `Record ${r.recordId}: ${c.label} — ${c.reason}`;
-    addToLog({ type: 'Classification', detail: output });
-    document.getElementById('classificationOutput').textContent = output;
+    out = `Record ${r.recordId}: ${c.label} — ${c.reason}`;
+    addToLog({ type: 'Classification', detail: out });
+    document.getElementById('classificationOutput').textContent = out;
   } else {
-    // bulk
-    const results = arr.map(r => ({ id: r.recordId, classification: classifyRecord(r) }));
-    results.sort((a,b) => a.classification.level - b.classification.level);
-    output = results.map(x => `${x.id}: ${x.classification.label}`).join('\n');
-    addToLog({ type: 'Bulk classification', detail: `Classified ${results.length} records` });
-    document.getElementById('classificationOutput').textContent = output;
+    const arr = getRecords();
+    out = arr.map(r => {
+      const c = classifyRecord(r);
+      return `${r.recordId}: ${c.label}`;
+    }).join('\n');
+    addToLog({ type: 'Bulk classify', detail: `Classified ${arr.length} records` });
+    document.getElementById('classificationOutput').textContent = out;
   }
 });
 
-/* -------------------------
-   Table, select and load
-   ------------------------- */
-
+// Table & select rendering
 function renderTable(){
   const body = document.getElementById('recordsBody');
   if(!body) return;
   body.innerHTML = '';
   const arr = getRecords();
-  arr.forEach(r => {
-    const soh = computeSOH_percent(r);
+  arr.forEach(r=>{
+    const soh = computeSOH_capacity(r);
     const tr = document.createElement('tr');
     tr.className = 'hover:bg-slate-50 cursor-pointer';
     tr.innerHTML = `
       <td class='p-2'>${r.recordId}</td>
       <td class='p-2'>${r.inspectionDate || r.updatedAt || ''}</td>
-      <td class='p-2'>${r.chemistry || ''}</td>
+      <td class='p-2'>${r.chemistry}</td>
       <td class='p-2'>${r.nominalKWh || ''}</td>
       <td class='p-2'>${r.measuredKWh || ''}</td>
-      <td class='p-2'>${soh ? soh.toFixed(1) : '—'}</td>
+      <td class='p-2'>${soh != null ? soh.toFixed(1) : '—'}</td>
       <td class='p-2'>
         <button class='px-2 py-1 text-xs rounded border mr-1' onclick="event.stopPropagation(); loadRecordToForm('${r.recordId}')">Load</button>
         <button class='px-2 py-1 text-xs rounded border mr-1' onclick="event.stopPropagation(); if(confirm('Delete ${r.recordId}?')) deleteRecord('${r.recordId}')">Delete</button>
@@ -886,8 +825,8 @@ function populateSelect(){
   const sel = document.getElementById('recordSelect');
   sel.innerHTML = '';
   const arr = getRecords();
-  const empty = document.createElement('option'); empty.text = '-- select record --'; empty.value = ''; sel.appendChild(empty);
-  arr.forEach(r => {
+  const empty = document.createElement('option'); empty.text='-- select record --'; empty.value=''; sel.appendChild(empty);
+  arr.forEach(r=>{
     const opt = document.createElement('option');
     opt.value = r.recordId;
     opt.text = `${r.recordId} — ${r.chemistry} — ${r.inspectionDate || r.updatedAt || ''}`;
@@ -896,10 +835,9 @@ function populateSelect(){
 }
 
 function loadRecordToForm(id){
-  const arr = getRecords();
-  const r = arr.find(x => x.recordId === id);
+  const r = getRecords().find(x=> x.recordId === id);
   if(!r) return;
-  document.getElementById('recordId').value = r.recordId || '';
+  document.getElementById('recordId').value = r.recordId;
   document.getElementById('origID').value = r.origID || '';
   document.getElementById('manufacturer').value = r.manufacturer || '';
   document.getElementById('chemistry').value = r.chemistry || 'Other';
@@ -909,53 +847,43 @@ function loadRecordToForm(id){
   document.getElementById('quickStatus').textContent = `Loaded ${r.recordId}`;
 }
 
-/* -------------------------
-   Charts (Chart.js)
-   ------------------------- */
-
-let sohChart = null, irChart = null;
+// Charts
+let sohChart=null, irChart=null;
 function updateCharts(){
   const arr = getRecords();
-  const labels = arr.map(r => r.recordId);
-  const sohData = arr.map(r => {
-    const v = computeSOH_percent(r);
-    return v === null ? null : Number(v.toFixed(2));
+  const labels = arr.map(r=>r.recordId);
+  const sohData = arr.map(r=>{
+    const v = computeSOH_capacity(r);
+    return v != null ? Number(v.toFixed(2)) : null;
   });
-  const irData = arr.map(r => {
-    // use compensated cell IR if available, else measuredIR_ohm, convert to mΩ for chart
+  const irData = arr.map(r=>{
     const cell = (safeNum(r.compensatedCellIR_ohm) !== null) ? Number(r.compensatedCellIR_ohm) : (safeNum(r.measuredIR_ohm) !== null ? Number(r.measuredIR_ohm) : null);
-    return cell ? Number((cell * 1000).toFixed(2)) : null;
+    return cell ? Number((cell*1000).toFixed(2)) : null;  // show mΩ
   });
 
-  const ctx = document.getElementById('sohChart').getContext('2d');
+  const ctx1 = document.getElementById('sohChart').getContext('2d');
   if(sohChart) sohChart.destroy();
-  sohChart = new Chart(ctx, {
+  sohChart = new Chart(ctx1, {
     type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{ label: 'SoH %', data: sohData }]
-    },
-    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 110 } } }
+    data: { labels, datasets: [{ label: 'SoH (%)', data: sohData, backgroundColor: 'rgba(14,166,228,0.6)' }] },
+    options: { responsive: true, scales: { y: { beginAtZero: true, max: 110 } }, plugins: { legend: { display: false } } }
   });
 
   const ctx2 = document.getElementById('irChart').getContext('2d');
   if(irChart) irChart.destroy();
   irChart = new Chart(ctx2, {
     type: 'line',
-    data: { labels: labels, datasets: [{ label: 'IR (mΩ)', data: irData, tension: 0.2 }] },
-    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    data: { labels, datasets: [{ label: 'Cell IR (mΩ)', data: irData, borderColor: 'rgba(79,70,229,0.8)', fill: false, tension: 0.3 }] },
+    options: { responsive: true, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
   });
 }
 
-/* -------------------------
-   PDF report (jsPDF)
-   ------------------------- */
-
+// Report (PDF) generation
 async function generateReportFor(recordId){
   const arr = getRecords();
   const r = arr.find(x => x.recordId === recordId);
   if(!r) return alert('Record not found');
-  const analysis = analysisForRecord(r);
+  const analysis = analysisFor(r);
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   doc.setFontSize(14);
@@ -964,49 +892,43 @@ async function generateReportFor(recordId){
   doc.text(`Record ID: ${r.recordId}`, 14, 32);
   doc.text(`Chemistry: ${r.chemistry}`, 14, 38);
   doc.text(`Inspection date: ${r.inspectionDate || r.updatedAt || ''}`, 14, 44);
-  doc.text(`SoH (capacity): ${analysis.SOH_capacity_pct ? analysis.SOH_capacity_pct.toFixed(2) + '%' : 'N/A'}`, 14, 52);
-  doc.text(`SoH (IR heuristic): ${analysis.SOH_resistance_pct ? analysis.SOH_resistance_pct.toFixed(2) + '%' : 'N/A'}`, 14, 58);
-  doc.text(`Estimated usable energy: ${analysis.estimatedUsableKWh || 'N/A'} kWh`, 14, 64);
-  doc.text('Recommendation:', 14, 74);
-  doc.text(analysis.recommendation, 14, 80, { maxWidth: 180 });
-  doc.text('Safety flags:', 14, 100);
-  doc.text(analysis.safetyFlags.length ? analysis.safetyFlags.join('; ') : 'None', 14, 106, { maxWidth: 180 });
-  doc.save(`${r.recordId}_second_life_report.pdf`);
-  addToLog({ type: 'Report', detail: `Generated PDF for ${r.recordId}` });
+  if(analysis.SOH_capacity_pct != null) doc.text(`SoH (capacity): ${analysis.SOH_capacity_pct.toFixed(2)}%`, 14, 50);
+  if(analysis.SOH_resistance_pct != null) doc.text(`SoH (IR): ${analysis.SOH_resistance_pct.toFixed(2)}%`, 14, 56);
+  if(analysis.estimatedUsable_kWh) doc.text(`Estimated usable energy: ${analysis.estimatedUsable_kWh} kWh`, 14, 62);
+  doc.text('Recommended use:', 14, 70);
+  doc.text(analysis.recommendedUse, 14, 76, { maxWidth: 180 });
+  doc.save(`${r.recordId}_SL_report.pdf`);
+  addToLog({ type: 'Report', detail: `PDF generated for ${r.recordId}` });
 }
 
 document.getElementById('generateReportBtn').addEventListener('click', ()=>{
   const sel = document.getElementById('recordSelect').value;
-  if(!sel) return alert('Select a record first');
+  if(!sel) return alert('Select a record');
   generateReportFor(sel);
 });
 
-/* -------------------------
-   Log download & clear
-   ------------------------- */
-
+// Log download / clear
 document.getElementById('downloadLogBtn').addEventListener('click', ()=>{
   const blob = new Blob([JSON.stringify(log, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'battery_repurpose_log_combined.json'; a.click(); URL.revokeObjectURL(url);
+  const a = document.createElement('a'); a.href = url; a.download = 'battery_repurpose_log_v2.json'; a.click(); URL.revokeObjectURL(url);
 });
 
-document.getElementById('clearAllBtn').addEventListener('click', ()=>{ if(confirm('Clear logs only? Press OK to clear logs and records. Cancel to keep records.')){ log.length = 0; renderLog(); clearAllRecords(); } });
+document.getElementById('clearAllBtn').addEventListener('click', ()=>{
+  if(confirm('Clear all records and log?')){ localStorage.removeItem(STORAGE_KEY); renderTable(); populateSelect(); log.length=0; renderLog(); }
+});
 
-/* -------------------------
-   Init
-   ------------------------- */
-
+// Initialize
 function init(){
   renderTable();
   renderLog();
   populateSelect();
-  const r = getRecords()[0];
-  if(r) document.getElementById('quickStatus').textContent = `Loaded ${r.recordId}`;
+  const rec = getRecords()[0];
+  if(rec) document.getElementById('quickStatus').textContent = `Loaded ${rec.recordId}`;
 }
-
 init();
 
 </script>
+
 </body>
 </html>
